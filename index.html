@@ -139,6 +139,36 @@
   .readline .val{font-family:var(--mono); color:var(--amber); font-weight:600; text-align:right;}
   .card-full{grid-column:1/-1;}
 
+  .fav-add{display:flex; gap:8px; margin-bottom:12px;}
+  .fav-add input[type="text"]{
+    flex:1; background:var(--panel-raised); border:1px solid var(--line); color:var(--text);
+    font-family:var(--sans); font-size:13px; padding:8px 10px; border-radius:5px; outline:none; min-width:0;
+  }
+  .fav-add input[type="text"]:focus{border-color:var(--teal-dim);}
+  .fav-add button{
+    background:var(--panel-raised); border:1px solid var(--teal-dim); color:var(--teal);
+    font-family:var(--sans); font-size:12.5px; font-weight:600; padding:8px 14px;
+    border-radius:5px; cursor:pointer; white-space:nowrap;
+  }
+  .fav-add button:hover{background:var(--teal-dim); color:var(--text);}
+  .fav-list{display:flex; flex-direction:column; gap:6px;}
+  .fav-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--panel-raised); border:1px solid var(--line); border-radius:5px;
+    padding:9px 12px; cursor:pointer;
+  }
+  .fav-row:hover{border-color:var(--teal-dim);}
+  .fav-row .fav-info{display:flex; flex-direction:column; gap:1px; overflow:hidden;}
+  .fav-row .fav-label{font-size:13px; color:var(--text); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .fav-row .fav-freq{font-family:var(--mono); font-size:11.5px; color:var(--text-dim);}
+  .fav-row .fav-del{
+    background:none; border:none; color:var(--text-dim); font-size:16px; cursor:pointer;
+    padding:2px 6px; line-height:1; flex-shrink:0;
+  }
+  .fav-row .fav-del:hover{color:var(--red);}
+  .fav-empty{font-size:12.5px; color:var(--text-dim); text-align:center; padding:8px 0;}
+  .fav-empty.hidden{display:none;}
+
   .qbtn{
     width:16px; height:16px; border-radius:50%;
     border:1px solid var(--teal-dim); background:transparent; color:var(--teal);
@@ -250,6 +280,16 @@
         <div class="readline"><span class="label-group">Ganho inicial <button class="qbtn" data-q="gain">?</button></span><span class="val" id="gain">—</span></div>
         <div class="note" id="noteBox">Selecione uma banda ou ajuste a frequência manualmente.</div>
       </div>
+    </div>
+
+    <div class="card" id="favCard">
+      <h2>Favoritos</h2>
+      <div class="fav-add">
+        <input type="text" id="favLabel" placeholder="Nome (opcional)">
+        <button id="favSaveBtn">☆ Salvar atual</button>
+      </div>
+      <div class="fav-list" id="favList"></div>
+      <div class="fav-empty" id="favEmpty">Nenhum favorito salvo ainda.</div>
     </div>
 
     <div class="footer-note">
@@ -402,24 +442,48 @@
 <script>
 /* ---------------- data ---------------- */
 const BANDS = [
+  { name:"HF SSB/CW", fmin:1.8, fmax:30, def:14.2,
+    demod:"SSB (LSB/USB)", bw:"2.4–3 kHz", squelch:"N/A (SSB não usa squelch)", gain:"Manual, Direct Sampling ligado",
+    sr:"2.4 MSPS ou menor", note:"Ative Direct Sampling (Q branch) na aba de Dispositivo — sem isso essa faixa fica fora do alcance do tuner normal. Antena precisa de contrapeso/terra." },
   { name:"FM Broadcast", fmin:88, fmax:108, def:98,
     demod:"WFM", bw:"200 kHz", squelch:"Deemphasis 50µs (JP/EU)", gain:"AGC ligado",
     sr:"2.4 MSPS", note:"Sinal forte e contínuo — bom pra calibrar PPM travando numa estação conhecida antes de ir pra outras bandas." },
+  { name:"VOR / ILS", fmin:108, fmax:118, def:112,
+    demod:"VOR Demodulator", bw:"25 kHz", squelch:"N/A", gain:"Manual",
+    sr:"2.4 MSPS", note:"Plugin específico do SDRangel (não é AM genérico) — decodifica o radial/rumo automaticamente." },
   { name:"Aeronáutico AM", fmin:118, fmax:137, def:127,
     demod:"AM", bw:"8–16 kHz", squelch:"Squelch ativo (PTT intermitente)", gain:"Manual, ~30-40dB",
     sr:"2.4 MSPS", note:"Tráfego é intermitente — deixe o squelch ligado ou vai ouvir só ruído entre transmissões." },
   { name:"NOAA APT", fmin:137, fmax:138, def:137.1,
     demod:"WFM", bw:"34–40 kHz", squelch:"Squelch OFF (decoder precisa do sinal contínuo)", gain:"Manual, evitar saturação",
     sr:"2.4 MSPS", note:"Telescópica funciona pra teste, mas V-dipole ou QFH dá polarização circular e resultado bem melhor no decode de imagem." },
+  { name:"AIS (navios)", fmin:161.9, fmax:162.1, def:161.975,
+    demod:"AIS Demodulator", bw:"9.6 kHz (GMSK)", squelch:"N/A", gain:"Manual",
+    sr:"2.4 MSPS", note:"Dois canais simultâneos (161.975 e 162.025) dão cobertura completa — dá pra rodar dois VFOs ao mesmo tempo no SDRangel." },
+  { name:"Marinho VHF (voz)", fmin:156, fmax:162, def:156.8,
+    demod:"NFM", bw:"25 kHz (ou 12.5 kHz)", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
+    sr:"2.4 MSPS", note:"156.800 MHz é o canal 16, canal internacional de chamada/socorro." },
   { name:"Ham 2m (VHF)", fmin:144, fmax:148, def:145.5,
     demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
     sr:"2.4 MSPS", note:"Banda de voz — squelch evita ficar escutando ruído de fundo o tempo todo." },
-  { name:"ADS-B", fmin:1090, fmax:1090, def:1090,
-    demod:"ADS-B Demodulator", bw:"2 MHz (modo específico)", squelch:"N/A — modo de pulso", gain:"Manual alto, LNA recomendado",
-    sr:"2.4–3.2 MSPS", note:"Telescópica é bem subótima aqui (6.9cm ideal, ganho baixo). Antena colinear dedicada 1090MHz rende muito mais alcance." },
+  { name:"APRS", fmin:144.3, fmax:145, def:144.66,
+    demod:"Packet (AFSK1200)", bw:"12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.4 MSPS", note:"144.660 MHz é o padrão no Japão (144.390 nas Américas, 144.800 na Europa) — ajuste conforme a região." },
+  { name:"Rádio livre JP (特小)", fmin:422.05, fmax:422.3, def:422.2,
+    demod:"NFM", bw:"8.5–12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.4 MSPS", note:"特定小電力トランシーバー — 422.050–422.175MHz uso geral, 422.200–422.300MHz uso lazer. Sem licença, potência limitada a 10mW." },
   { name:"Ham 70cm (UHF)", fmin:430, fmax:440, def:433,
     demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
     sr:"2.4 MSPS", note:"Mesma lógica do 2m, telescópica nessa faixa fica bem curta (~17cm) — fácil de fazer física mesmo." },
+  { name:"Voz digital (DMR/P25/D-STAR)", fmin:400, fmax:470, def:440,
+    demod:"DSD (DMR/dPMR/D-STAR/NXDN/P25)", bw:"12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.4 MSPS", note:"O canal exato varia por região/operadora — verifique a lista de repetidoras digitais locais antes de sintonizar." },
+  { name:"Pager (POCSAG)", fmin:148, fmax:174, def:153.05,
+    demod:"Pager Demodulator", bw:"12.5–25 kHz", squelch:"N/A", gain:"Manual",
+    sr:"2.4 MSPS", note:"Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços." },
+  { name:"ADS-B", fmin:1090, fmax:1090, def:1090,
+    demod:"ADS-B Demodulator", bw:"2 MHz (modo específico)", squelch:"N/A — modo de pulso", gain:"Manual alto, LNA recomendado",
+    sr:"2.4–3.2 MSPS", note:"Telescópica é bem subótima aqui (6.9cm ideal, ganho baixo). Antena colinear dedicada 1090MHz rende muito mais alcance." },
 ];
 
 /* quick balloon text + link target (guide anchor id) */
@@ -440,8 +504,6 @@ const QDATA = {
 const vfoEl = document.getElementById('vfo');
 const freqInput = document.getElementById('freqInput');
 const presetsEl = document.getElementById('presets');
-let activePresetIdx = -1;
-
 const MIN_HZ = 500000;
 const MAX_HZ = 1700000000;
 const DIGIT_COUNT = 10; // up to 1,999,999,999 Hz
@@ -453,11 +515,14 @@ function renderPresets(){
     const btn = document.createElement('button');
     btn.className = 'preset-btn';
     btn.innerHTML = `<span class="name">${b.name}</span><span class="range">${b.fmin===b.fmax ? b.fmin : b.fmin+'–'+b.fmax} MHz</span>`;
-    btn.addEventListener('click', () => { activePresetIdx = i; setFreq(b.def); updateActiveButtons(); });
+    btn.addEventListener('click', () => { setFreq(b.def); });
     presetsEl.appendChild(btn);
   });
 }
-function updateActiveButtons(){ [...presetsEl.children].forEach((el, i) => el.classList.toggle('active', i === activePresetIdx)); }
+function updateActiveButtons(f){
+  const idx = BANDS.findIndex(b => f >= b.fmin - 0.05 && f <= b.fmax + 0.05);
+  [...presetsEl.children].forEach((el, i) => el.classList.toggle('active', i === idx));
+}
 function matchBand(f){ return BANDS.find(b => f >= b.fmin - 0.05 && f <= b.fmax + 0.05); }
 function fmt(n, decimals){ return n.toLocaleString('pt-BR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals}); }
 
@@ -492,8 +557,6 @@ function renderVfo(hz){
 function bumpDigit(placeValue, dir){
   let hz = currentHz + dir * placeValue;
   hz = Math.max(MIN_HZ, Math.min(MAX_HZ, hz));
-  activePresetIdx = -1;
-  updateActiveButtons();
   setFreq(hz / 1e6);
 }
 
@@ -517,6 +580,7 @@ function update(f){
   currentHz = Math.round(f * 1e6);
   renderVfo(currentHz);
   freqInput.value = f;
+  updateActiveButtons(f);
 
   const lambda_m = 300 / f;
   const quarterM = 71.25 / f;
@@ -559,7 +623,7 @@ function setFreq(f){ update(f); }
 
 freqInput.addEventListener('change', () => {
   const v = parseFloat(freqInput.value);
-  if (!isNaN(v) && v > 0) { activePresetIdx = -1; updateActiveButtons(); update(v); }
+  if (!isNaN(v) && v > 0) { update(v); }
 });
 
 /* ---------------- tabs ---------------- */
@@ -628,8 +692,68 @@ document.addEventListener('click', (e) => {
 });
 window.addEventListener('scroll', closeBalloon, true);
 
+/* ---------------- favoritos ---------------- */
+const FAV_KEY = 'vfo_favorites';
+let favorites = [];
+try { favorites = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch (e) { favorites = []; }
+
+const favList = document.getElementById('favList');
+const favEmpty = document.getElementById('favEmpty');
+const favLabel = document.getElementById('favLabel');
+const favSaveBtn = document.getElementById('favSaveBtn');
+
+function saveFavorites(){
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(favorites)); }
+  catch (e) { /* localStorage indisponível neste contexto — favoritos ficam só na sessão atual */ }
+}
+
+function fmtFreqLabel(hz){
+  if (hz >= 1e6) {
+    const s = (hz/1e6).toFixed(6).replace(/0+$/,'').replace(/\.$/,'');
+    return s + ' MHz';
+  }
+  return (hz/1e3).toFixed(1) + ' kHz';
+}
+
+function renderFavorites(){
+  favList.innerHTML = '';
+  favEmpty.classList.toggle('hidden', favorites.length > 0);
+  favorites.forEach((fav, i) => {
+    const row = document.createElement('div');
+    row.className = 'fav-row';
+    row.innerHTML = `
+      <div class="fav-info">
+        <span class="fav-label">${fav.label}</span>
+        <span class="fav-freq">${fmtFreqLabel(fav.hz)}</span>
+      </div>
+      <button class="fav-del" title="Remover">×</button>
+    `;
+    row.addEventListener('click', (e) => {
+      if (e.target.classList.contains('fav-del')) return;
+      setFreq(fav.hz / 1e6);
+    });
+    row.querySelector('.fav-del').addEventListener('click', (e) => {
+      e.stopPropagation();
+      favorites.splice(i, 1);
+      saveFavorites();
+      renderFavorites();
+    });
+    favList.appendChild(row);
+  });
+}
+
+favSaveBtn.addEventListener('click', () => {
+  const label = favLabel.value.trim() || fmtFreqLabel(currentHz);
+  favorites.unshift({ label, hz: currentHz });
+  favLabel.value = '';
+  saveFavorites();
+  renderFavorites();
+});
+favLabel.addEventListener('keydown', (e) => { if (e.key === 'Enter') favSaveBtn.click(); });
+
 /* ---------------- init ---------------- */
 renderPresets();
+renderFavorites();
 setFreq(98);
 
 /* ---------------- PWA service worker ---------------- */
