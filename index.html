@@ -78,27 +78,32 @@
   /* ---- calculator ---- */
   .freq-panel{
     background:var(--panel); border:1px solid var(--line); border-radius:6px;
-    padding:20px; margin-bottom:18px; position:relative; overflow:hidden;
+    padding:22px 20px; margin-bottom:18px; position:relative; overflow:hidden;
   }
-  .freq-row{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
-  .freq-readout{
-    font-family:var(--mono); font-size:clamp(30px,7vw,44px);
-    color:var(--amber); font-weight:600; text-shadow:0 0 18px rgba(233,234,236,.18);
-    min-width:190px;
+  .vfo-row{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;}
+  .vfo{display:flex; align-items:center; gap:2px; user-select:none;}
+  .vfo .digit{
+    width:clamp(20px,6vw,30px); height:clamp(40px,10vw,52px);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:clamp(20px,5.5vw,30px); font-weight:600;
+    color:var(--amber); background:var(--panel-raised); border:1px solid var(--line);
+    border-radius:5px; position:relative; cursor:ns-resize;
+    text-shadow:0 0 14px rgba(233,234,236,.15);
   }
-  .freq-readout .unit{font-size:15px; color:var(--amber-dim); margin-left:6px;}
-  input[type="range"]{
-    flex:1; min-width:150px; -webkit-appearance:none; height:3px;
-    background:var(--line); border-radius:2px; outline:none;
+  .vfo .digit.dim{ color:var(--text-dim); text-shadow:none; }
+  .vfo .digit:hover{ border-color:var(--teal-dim); }
+  .vfo .digit .hit{ position:absolute; left:0; right:0; height:52%; }
+  .vfo .digit .hit.top{ top:0; }
+  .vfo .digit .hit.bottom{ bottom:0; }
+  .vfo .digit .arrow{
+    position:absolute; left:50%; transform:translateX(-50%);
+    font-size:8px; color:var(--teal); opacity:0; pointer-events:none; transition:opacity .12s;
   }
-  input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance:none; width:14px;height:14px;border-radius:50%;
-    background:var(--amber); box-shadow:0 0 8px rgba(233,234,236,.35); cursor:pointer; margin-top:-5.5px;
-  }
-  input[type="range"]::-moz-range-thumb{
-    width:14px;height:14px;border-radius:50%; background:var(--amber);border:none;
-    box-shadow:0 0 8px rgba(233,234,236,.35); cursor:pointer;
-  }
+  .vfo .digit .arrow.up{ top:2px; }
+  .vfo .digit .arrow.down{ bottom:2px; }
+  .vfo .digit:hover .arrow{ opacity:.7; }
+  .vfo .sep{ width:7px; text-align:center; color:var(--text-dim); font-family:var(--mono); font-size:18px; align-self:center; }
+  .vfo-unit{ font-family:var(--mono); font-size:13px; color:var(--text-dim); letter-spacing:.06em; }
   .freq-manual{display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:14px;}
   .freq-manual input[type="number"]{
     width:110px; background:var(--panel-raised); border:1px solid var(--line); color:var(--amber);
@@ -210,12 +215,12 @@
   <div class="view active" id="view-calc">
 
     <div class="freq-panel">
-      <div class="freq-row">
-        <div class="freq-readout"><span id="freqDisplay">98,000</span><span class="unit">MHz</span></div>
-        <input type="range" id="freqSlider" min="0" max="1" step="0.0001" value="0">
+      <div class="vfo-row">
+        <div class="vfo" id="vfo"></div>
+        <span class="vfo-unit">Hz</span>
       </div>
       <div class="freq-manual">
-        <span>Freq. manual:</span>
+        <span>Ir para:</span>
         <input type="number" id="freqInput" value="98" step="0.001">
         <span>MHz</span>
       </div>
@@ -431,16 +436,16 @@ const QDATA = {
 };
 
 /* ---------------- freq / calc logic ---------------- */
-const SLIDER_MIN_LOG = Math.log10(0.5);
-const SLIDER_MAX_LOG = Math.log10(1700);
-function freqToSlider(f){ const l = Math.log10(Math.max(0.5, Math.min(1700, f))); return (l - SLIDER_MIN_LOG) / (SLIDER_MAX_LOG - SLIDER_MIN_LOG); }
-function sliderToFreq(s){ const l = SLIDER_MIN_LOG + s * (SLIDER_MAX_LOG - SLIDER_MIN_LOG); return Math.pow(10, l); }
 
-const freqDisplay = document.getElementById('freqDisplay');
-const freqSlider = document.getElementById('freqSlider');
+const vfoEl = document.getElementById('vfo');
 const freqInput = document.getElementById('freqInput');
 const presetsEl = document.getElementById('presets');
 let activePresetIdx = -1;
+
+const MIN_HZ = 500000;
+const MAX_HZ = 1700000000;
+const DIGIT_COUNT = 10; // up to 1,999,999,999 Hz
+let currentHz = 98000000;
 
 function renderPresets(){
   presetsEl.innerHTML = '';
@@ -456,9 +461,61 @@ function updateActiveButtons(){ [...presetsEl.children].forEach((el, i) => el.cl
 function matchBand(f){ return BANDS.find(b => f >= b.fmin - 0.05 && f <= b.fmax + 0.05); }
 function fmt(n, decimals){ return n.toLocaleString('pt-BR', {minimumFractionDigits:decimals, maximumFractionDigits:decimals}); }
 
+function renderVfo(hz){
+  const str = String(Math.round(hz)).padStart(DIGIT_COUNT, '0');
+  let firstNonZero = str.search(/[1-9]/);
+  if (firstNonZero === -1) firstNonZero = DIGIT_COUNT - 1;
+
+  vfoEl.innerHTML = '';
+  for (let i = 0; i < DIGIT_COUNT; i++) {
+    const placeValue = Math.pow(10, DIGIT_COUNT - 1 - i);
+    const digitEl = document.createElement('div');
+    digitEl.className = 'digit' + (i < firstNonZero ? ' dim' : '');
+    digitEl.dataset.place = placeValue;
+    digitEl.innerHTML = `
+      <span class="arrow up">▲</span>
+      <span class="num">${str[i]}</span>
+      <span class="arrow down">▼</span>
+      <div class="hit top" data-dir="1"></div>
+      <div class="hit bottom" data-dir="-1"></div>
+    `;
+    vfoEl.appendChild(digitEl);
+    if ((DIGIT_COUNT - 1 - i) % 3 === 0 && i !== DIGIT_COUNT - 1) {
+      const sep = document.createElement('span');
+      sep.className = 'sep';
+      sep.textContent = '.';
+      vfoEl.appendChild(sep);
+    }
+  }
+}
+
+function bumpDigit(placeValue, dir){
+  let hz = currentHz + dir * placeValue;
+  hz = Math.max(MIN_HZ, Math.min(MAX_HZ, hz));
+  activePresetIdx = -1;
+  updateActiveButtons();
+  setFreq(hz / 1e6);
+}
+
+vfoEl.addEventListener('wheel', (e) => {
+  const digitEl = e.target.closest('.digit');
+  if (!digitEl) return;
+  e.preventDefault();
+  const place = parseInt(digitEl.dataset.place, 10);
+  bumpDigit(place, e.deltaY < 0 ? 1 : -1);
+}, { passive:false });
+
+vfoEl.addEventListener('click', (e) => {
+  const hit = e.target.closest('.hit');
+  if (!hit) return;
+  const digitEl = e.target.closest('.digit');
+  const place = parseInt(digitEl.dataset.place, 10);
+  bumpDigit(place, parseInt(hit.dataset.dir, 10));
+});
+
 function update(f){
-  freqDisplay.textContent = f >= 1000 ? fmt(f,0) : fmt(f,3);
-  freqSlider.value = freqToSlider(f);
+  currentHz = Math.round(f * 1e6);
+  renderVfo(currentHz);
   freqInput.value = f;
 
   const lambda_m = 300 / f;
@@ -500,7 +557,6 @@ function update(f){
 }
 function setFreq(f){ update(f); }
 
-freqSlider.addEventListener('input', () => { activePresetIdx = -1; updateActiveButtons(); update(sliderToFreq(parseFloat(freqSlider.value))); });
 freqInput.addEventListener('change', () => {
   const v = parseFloat(freqInput.value);
   if (!isNaN(v) && v > 0) { activePresetIdx = -1; updateActiveButtons(); update(v); }
