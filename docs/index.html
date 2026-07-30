@@ -377,6 +377,8 @@
       <span class="tag">VOR / ILS · 108–118 MHz</span>
       <h3>Telescópica ajustada, vertical</h3>
       <p>Mesma lógica de antena do aeronáutico AM. O que muda é o demodulador — use o "VOR Demodulator" do SDRangel em vez de AM genérico, ele decodifica o radial automaticamente em vez de só dar áudio.</p>
+      <p><b>Bônus:</b> o VOR Demodulator também decodifica o identificador Morse de 2-3 letras e mostra em texto (campos "RX Ident" e "RX Morse") — verde se bate com o esperado, vermelho se não bate, amarelo se for o último identificador válido recebido. Não precisa saber Morse de ouvido.</p>
+      <p>Pra usar o mapa com a posição de todos os VOR próximos (feature "VOR Localizer"), primeiro define sua posição em Preferences → My position, depois baixa a base de dados uma única vez (botão "Download VOR Database").</p>
     </div>
     <div class="guide-section" id="g-antena-aero">
       <span class="tag">Aeronáutico / VHF Ham · 108–174 MHz</span>
@@ -392,6 +394,7 @@
       <span class="tag">AIS (navios) · 161.975 / 162.025 MHz</span>
       <h3>Telescópica vertical ou colinear marítima</h3>
       <p>Sinal GMSK contínuo de embarcações. O SDRangel usa o plugin "AIS Demodulator", que já decodifica posição/nome/rumo do navio automaticamente. Pra cobertura completa dos dois canais (A e B) ao mesmo tempo, precisa rodar dois VFOs em paralelo no mesmo dispositivo.</p>
+      <p>Adicione a feature Map (Add Feature → Map) pra ver os navios detectados aparecendo direto num mapa, sem precisar ler dado bruto.</p>
     </div>
     <div class="guide-section" id="g-antena-marine">
       <span class="tag">Marinho VHF (voz) · 156–162 MHz</span>
@@ -427,6 +430,7 @@
       <span class="tag">ADS-B · 1090 MHz</span>
       <h3>Colinear dedicada 1090MHz</h3>
       <p>Não use telescópica genérica aqui — o ganho de antena importa muito nessa faixa e a telescópica capta mal. Instale o mais alto possível, livre de obstrução (telhado é ideal).</p>
+      <p>Adicione a feature Map (Add Feature → Map) pra ver os aviões detectados voando em tempo real, com altitude e velocidade — não precisa demodular "de ouvido", os dados já chegam decodificados.</p>
     </div>
 
     <div class="guide-group-title">Aba de Dispositivo (RTL-SDR Input)</div>
@@ -525,10 +529,12 @@
 
     <div class="guide-group-title">Recursos (Features) úteis</div>
     <div class="guide-section" id="g-features">
-      <h3>Map, Satellite Tracker, Frequency Scanner</h3>
-      <p><b>Map</b> — mostra aviões (ADS-B) e navios (AIS) num mapa, atualizado em tempo real. Adicione via Add Feature → Map.</p>
+      <h3>Map, Satellite Tracker, Frequency Scanner e mais</h3>
+      <p><b>Map</b> — mostra aviões (ADS-B), navios (AIS) e VORs num mapa, atualizado em tempo real. Adicione via Add Feature → Map.</p>
       <p><b>Satellite Tracker</b> — calcula quando satélites passam sobre sua localização.</p>
       <p><b>Frequency Scanner</b> — varre uma lista de frequências automaticamente, parando quando encontra atividade.</p>
+      <p><b>VOR Locator</b> — plugin de feature dedicado que soma vários VOR Demodulators e plota sua posição estimada no mapa, calculando por triangulação a partir dos radiais recebidos.</p>
+      <p><b>Morse Decoder</b> — decodificador de Morse (CW) de propósito geral, separado do VOR. Funciona em cima do áudio de qualquer canal (normalmente SSB), útil pra rádio amador em CW puro, não só navegação aérea.</p>
     </div>
 
     <div class="guide-group-title">Primeiro teste — passo a passo</div>
