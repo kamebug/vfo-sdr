@@ -1,0 +1,19 @@
+{
+  "name": "VFO — Antena & SDRangel",
+  "short_name": "VFO",
+  "description": "Calculadora de antena e parâmetros SDRangel para RTL-SDR, com guia explicativo interativo.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c1210",
+  "theme_color": "#0c1210",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
