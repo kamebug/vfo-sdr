@@ -12,7 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>VFO — Antena &amp; SDRangel</title>
 <meta name="description" content="Calculadora de antena e parâmetros SDRangel para RTL-SDR, com guia explicativo interativo.">
-<meta name="theme-color" content="#0c1210">
+<meta name="theme-color" content="#2b2b2b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VFO">
@@ -21,24 +21,24 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <style>
   :root{
-    --bg: #101112;
-    --panel: #17181a;
-    --panel-raised: #1e2022;
-    --line: #2b2d30;
-    --amber: #e9eaec;
-    --amber-dim: #6b6e72;
-    --teal: #9aa0a6;
-    --teal-dim: #45484c;
-    --text: #c9cbcd;
-    --text-dim: #7a7d81;
-    --red: #ff6b6b;
+    --bg: #2b2b2b;
+    --panel: #404040;
+    --panel-raised: #4d4d4d;
+    --line: #5c5c5c;
+    --amber: #f9f9f9;
+    --amber-dim: #a0a0a0;
+    --teal: #00a896;
+    --teal-dim: #007a6e;
+    --text: #f9f9f9;
+    --text-dim: #a0a0a0;
+    --red: #ef5350;
     --mono: "IBM Plex Mono", "JetBrains Mono", "SF Mono", Consolas, monospace;
     --sans: "Inter", -apple-system, "Segoe UI", sans-serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background: radial-gradient(ellipse at top, #1b1c1e 0%, var(--bg) 60%);
+    background: radial-gradient(ellipse at top, #3a3a3a 0%, var(--bg) 60%);
     color:var(--text);
     font-family:var(--sans);
     min-height:100vh;
@@ -88,7 +88,7 @@
     font-family:var(--mono); font-size:clamp(20px,5.5vw,30px); font-weight:600;
     color:var(--amber); background:var(--panel-raised); border:1px solid var(--line);
     border-radius:5px; position:relative; cursor:ns-resize;
-    text-shadow:0 0 14px rgba(233,234,236,.15);
+    text-shadow:0 0 14px rgba(0,168,150,.2);
   }
   .vfo .digit.dim{ color:var(--text-dim); text-shadow:none; }
   .vfo .digit:hover{ border-color:var(--teal-dim); }
