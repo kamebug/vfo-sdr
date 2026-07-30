@@ -1,5 +1,5 @@
 // Incrementar CACHE_VERSION a cada mudança no index.html/manifest/icon
-const CACHE_VERSION = 'vfo-v2';
+const CACHE_VERSION = 'vfo-v4';
 const ASSETS = [
   './',
   './index.html',

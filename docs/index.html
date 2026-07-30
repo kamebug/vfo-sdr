@@ -293,7 +293,7 @@
     </div>
 
     <div class="footer-note">
-      λ/4 = 71.25 / f(MHz) · λ/2 (por perna) = 142.5 / (2·f(MHz)) · fator de velocidade 0.95 (fio nu)<br>
+      λ/4 = 71.5 / f(MHz) · λ/2 (por perna) = 142.5 / (2·f(MHz)) · fator de velocidade 0.95 (fio nu)<br>
       Toque no ? de qualquer campo pra ver a explicação, ou abra a aba Guia pra tudo junto.
     </div>
   </div>
@@ -301,17 +301,82 @@
   <!-- ===== VIEW: GUIA ===== -->
   <div class="view" id="view-guia">
 
+    <div class="guide-group-title">Favoritos</div>
+    <div class="guide-section" id="g-favoritos">
+      <h3>Salvar e reabrir frequências</h3>
+      <p>Toque em "☆ Salvar atual" na Calculadora pra guardar a frequência sintonizada no momento, com um nome opcional. Toque numa linha da lista pra voltar direto pra ela; o × remove.</p>
+      <p>Os favoritos ficam salvos no navegador (localStorage). Funcionam normalmente quando o app está hospedado (GitHub Pages) ou instalado como PWA — só não persistem numa pré-visualização temporária dentro de um sandbox.</p>
+    </div>
+
+    <div class="guide-group-title">Conceitos básicos, sem jargão</div>
+    <div class="guide-section" id="g-conceito-freq">
+      <h3>Frequência</h3>
+      <p>"Onde" na faixa de rádio um sinal está, medida em Hz (hertz). 1 MHz = 1 milhão de Hz. O rádio FM comercial fica na casa dos 76–95 MHz no Japão.</p>
+    </div>
+    <div class="guide-section" id="g-conceito-banda">
+      <h3>Banda</h3>
+      <p>Uma faixa de frequências reservada pra um uso — ex: "banda aeronáutica" = 118–137 MHz.</p>
+    </div>
+    <div class="guide-section" id="g-conceito-demod">
+      <h3>Demodulação</h3>
+      <p>O processo de extrair o áudio/dado útil de dentro do sinal de rádio. Cada tipo de transmissão precisa de um demodulador compatível (AM, FM, SSB...).</p>
+    </div>
+    <div class="guide-section" id="g-conceito-ganho">
+      <h3>Ganho</h3>
+      <p>O quanto o receptor amplifica o sinal antes de processar. Pouco ganho = sinal fraco demais pra ouvir. Ganho demais = distorção (satura).</p>
+    </div>
+    <div class="guide-section" id="g-conceito-decimacao">
+      <h3>Decimação</h3>
+      <p>Reduzir a taxa de amostragem depois de capturar um pedaço largo do espectro, pra sobrar só a parte que interessa, gastando menos processamento.</p>
+    </div>
+    <div class="guide-section" id="g-conceito-waterfall">
+      <h3>Espectro / Waterfall</h3>
+      <p>Dois jeitos de visualizar as frequências. Espectro é um gráfico de linha (altura = força do sinal). Waterfall é o mesmo dado "rolando" no tempo de cima pra baixo, formando um mapa de cores — cada faixa vertical colorida geralmente é uma estação/transmissão.</p>
+    </div>
+    <div class="guide-section" id="g-conceito-squelch">
+      <h3>Squelch</h3>
+      <p>Um "portão" que silencia o áudio quando não há sinal de verdade, só ruído de fundo — evita ficar ouvindo chiado constante entre transmissões.</p>
+    </div>
+
+    <div class="guide-group-title">Preparando o hardware (Android / OTG)</div>
+    <div class="guide-section" id="g-hardware-prep">
+      <h3>Conectando o RTL-SDR no celular</h3>
+      <p>1. Conecta o RTL-SDR V4 no adaptador USB-OTG, e o OTG no celular.<br>
+      2. Conecta a antena na entrada SMA do dongle.<br>
+      3. Abre o SDRangel. Na primeira vez, o Android vai perguntar se o app pode acessar o dispositivo USB — aceita, e marca a opção de sempre permitir pra esse dispositivo (evita autorizar toda vez).<br>
+      4. Se o dongle não aparecer, desconecta e reconecta o cabo OTG — é o problema mais comum, geralmente é só encosto ruim de contato.</p>
+    </div>
+
+    <div class="guide-group-title">Anatomia da tela do SDRangel</div>
+    <div class="guide-section" id="g-anatomia">
+      <h3>Elementos principais</h3>
+      <p>O SDRangel organiza tudo em <b>Workspaces</b> — como "mesas" onde você arruma os painéis que quiser ver.</p>
+      <table class="atable">
+        <tr><td>Ícone de "mãozinha"</td><td>Abre a lista de dispositivos de captura (seu RTL-SDR V4 aparece aqui).</td></tr>
+        <tr><td>Botão verde de play</td><td>Inicia a captura de RF do dispositivo selecionado.</td></tr>
+        <tr><td>Espectro/Waterfall</td><td>A visualização principal — mostra tudo que o dongle está captando na largura de banda escolhida.</td></tr>
+        <tr><td>Add Channel</td><td>Adiciona um demodulador (AM, FM, SSB, ADS-B etc.) sintonizado numa frequência dentro do que está sendo capturado.</td></tr>
+        <tr><td>Add Feature</td><td>Adiciona uma ferramenta que não é um demodulador — mapa, rastreador de satélite, scanner de frequência.</td></tr>
+      </table>
+      <p>Conceito-chave: o dispositivo captura uma faixa larga de uma vez (ex: 2.56 MHz de largura, centrada numa frequência). Dentro dela, você adiciona vários canais simultâneos, cada um sintonizado numa frequência específica dessa janela.</p>
+    </div>
+
     <div class="guide-group-title">Antena — tipo e setup por faixa</div>
 
     <div class="guide-section" id="g-antena-hf">
-      <span class="tag">HF · 0–30 MHz</span>
-      <h3>Longwire / dipolo de HF</h3>
-      <p>Via direct sampling (o RTL-SDR V4 já suporta nativamente, sem precisar de upconverter separado). Precisa de contrapeso/terra (counterpoise) pra funcionar bem — sem isso o sinal fica fraco mesmo com antena grande.</p>
+      <span class="tag">HF · 3–30 MHz</span>
+      <h3>Loop magnética ativa (ex: MLA-30)</h3>
+      <p>Via direct sampling (o RTL-SDR V4 já suporta nativamente, sem precisar de upconverter separado). Um fio reto quarto-de-onda em HF fica grande demais pra ser prático (ex: ~7,5m em 9.5MHz) — a loop magnética ativa contorna isso com um laço pequeno (~30cm) e eletrônica interna que compensa o tamanho reduzido.</p>
     </div>
     <div class="guide-section" id="g-antena-fm">
-      <span class="tag">FM Broadcast · 88–108 MHz</span>
-      <h3>Telescópica ~75cm</h3>
-      <p>Vertical simples já pega bem em área urbana. Boa banda pra calibrar o PPM do dongle, por ter estações fortes e conhecidas.</p>
+      <span class="tag">FM Broadcast (Japão) · 76.1–94.9 MHz</span>
+      <h3>Telescópica ~85cm</h3>
+      <p>Vertical simples já pega bem em área urbana. Boa banda pra calibrar o PPM do dongle, por ter estações fortes e conhecidas. No Japão a faixa é diferente do padrão internacional (88–108 MHz).</p>
+    </div>
+    <div class="guide-section" id="g-antena-vor">
+      <span class="tag">VOR / ILS · 108–118 MHz</span>
+      <h3>Telescópica ajustada, vertical</h3>
+      <p>Mesma lógica de antena do aeronáutico AM. O que muda é o demodulador — use o "VOR Demodulator" do SDRangel em vez de AM genérico, ele decodifica o radial automaticamente em vez de só dar áudio.</p>
     </div>
     <div class="guide-section" id="g-antena-aero">
       <span class="tag">Aeronáutico / VHF Ham · 108–174 MHz</span>
@@ -323,10 +388,40 @@
       <h3>V-dipole ou QFH (polarização circular)</h3>
       <p>Telescópica funciona só pra teste — o satélite muda de polarização conforme passa no céu, e a telescópica (polarização linear fixa) perde sinal nas bordas da passagem. QFH resolve isso.</p>
     </div>
+    <div class="guide-section" id="g-antena-ais">
+      <span class="tag">AIS (navios) · 161.975 / 162.025 MHz</span>
+      <h3>Telescópica vertical ou colinear marítima</h3>
+      <p>Sinal GMSK contínuo de embarcações. O SDRangel usa o plugin "AIS Demodulator", que já decodifica posição/nome/rumo do navio automaticamente. Pra cobertura completa dos dois canais (A e B) ao mesmo tempo, precisa rodar dois VFOs em paralelo no mesmo dispositivo.</p>
+    </div>
+    <div class="guide-section" id="g-antena-marine">
+      <span class="tag">Marinho VHF (voz) · 156–162 MHz</span>
+      <h3>Telescópica vertical</h3>
+      <p>156.800 MHz é o canal 16, o canal internacional de chamada e socorro — bom ponto de partida pra testar a faixa. Demodulador NFM, squelch ativo (tráfego é intermitente).</p>
+    </div>
+    <div class="guide-section" id="g-antena-aprs">
+      <span class="tag">APRS · ~144.3–145 MHz</span>
+      <h3>Telescópica ajustada, vertical</h3>
+      <p>144.660 MHz é o padrão no Japão (144.390 nas Américas, 144.800 na Europa). Demodulador "Packet (AFSK1200)" — decodifica posição e mensagens de estações APRS próximas.</p>
+    </div>
+    <div class="guide-section" id="g-antena-jprd">
+      <span class="tag">Rádio livre japonês (特小) · 422.05–422.3 MHz</span>
+      <h3>Telescópica curta (~17cm)</h3>
+      <p>特定小電力トランシーバー — sem licença, potência limitada a 10mW. 422.050–422.175MHz é uso geral/comercial (11 canais), 422.200–422.300MHz é uso lazer (9 canais). Demodulador NFM, squelch ativo.</p>
+    </div>
     <div class="guide-section" id="g-antena-uhf">
       <span class="tag">UHF Ham / ISS · 420–440 MHz</span>
       <h3>Telescópica curta (~17cm) ou colinear</h3>
       <p>Colinear dá mais ganho se for uso fixo/permanente. Telescópica é suficiente pra testes pontuais.</p>
+    </div>
+    <div class="guide-section" id="g-antena-dmr">
+      <span class="tag">Voz digital (DMR/P25/D-STAR) · 400–470 MHz</span>
+      <h3>Telescópica ou colinear conforme a faixa exata</h3>
+      <p>O canal exato varia muito por região e operadora — verifique a lista de repetidoras digitais locais antes de sintonizar. Demodulador "DSD" no SDRangel decodifica DMR, dPMR, D-STAR, NXDN e P25, mas cada protocolo precisa ser selecionado dentro do plugin.</p>
+    </div>
+    <div class="guide-section" id="g-antena-pager">
+      <span class="tag">Pager (POCSAG) · 148–174 MHz</span>
+      <h3>Telescópica ajustada</h3>
+      <p>Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços (hospitais, segurança). Demodulador "Pager Demodulator", sem squelch (decodifica em modo contínuo).</p>
     </div>
     <div class="guide-section" id="g-antena-adsb">
       <span class="tag">ADS-B · 1090 MHz</span>
@@ -342,7 +437,7 @@
     </div>
     <div class="guide-section" id="g-samplerate">
       <h3>Sample Rate (Sps)</h3>
-      <p>Quantas amostras por segundo o dongle captura. Define a largura total de espectro visível de uma vez. 2.4 MSPS é um bom equilíbrio entre estabilidade e banda capturada — valores maiores exigem mais USB/CPU.</p>
+      <p>Quantas amostras por segundo o dongle captura. Define a largura total de espectro visível de uma vez. 2.56 MSPS é um bom equilíbrio entre estabilidade e banda capturada — valores maiores exigem mais USB/CPU.</p>
     </div>
     <div class="guide-section" id="g-device-bw">
       <h3>RF Bandwidth</h3>
@@ -428,6 +523,40 @@
       <p>Grava o áudio demodulado (ou IQ bruto, dependendo do botão usado) em arquivo, pra reprocessar depois sem precisar captar o sinal ao vivo de novo.</p>
     </div>
 
+    <div class="guide-group-title">Recursos (Features) úteis</div>
+    <div class="guide-section" id="g-features">
+      <h3>Map, Satellite Tracker, Frequency Scanner</h3>
+      <p><b>Map</b> — mostra aviões (ADS-B) e navios (AIS) num mapa, atualizado em tempo real. Adicione via Add Feature → Map.</p>
+      <p><b>Satellite Tracker</b> — calcula quando satélites passam sobre sua localização.</p>
+      <p><b>Frequency Scanner</b> — varre uma lista de frequências automaticamente, parando quando encontra atividade.</p>
+    </div>
+
+    <div class="guide-group-title">Primeiro teste — passo a passo</div>
+    <div class="guide-section" id="g-primeiro-teste">
+      <h3>Do zero até ouvir áudio</h3>
+      <p>1. Conecta o dongle e a antena telescópica esticada em ~85cm.<br>
+      2. Abre o SDRangel, seleciona o RTL-SDR na lista de dispositivos.<br>
+      3. Define Center Frequency = 85.000.000 Hz (85 MHz — meio da faixa de FM japonesa).<br>
+      4. Sample Rate em 2.56 MSPS, Decimation em 1.<br>
+      5. Ganho manual em 35dB pra começar.<br>
+      6. Aperta o botão verde (play) — o espectro deve mostrar picos onde há estações.<br>
+      7. Add Channel → BFM.<br>
+      8. Ajusta a Channel frequency do canal pra uma estação conhecida (ex: 80.100.000 Hz).<br>
+      9. Sobe o volume do canal — deve tocar áudio.</p>
+      <p>Se funcionar limpo aqui, o resto do app (outros modos, outras bandas) segue a mesma lógica.</p>
+    </div>
+
+    <div class="guide-group-title">Solução de problemas rápidos</div>
+    <div class="guide-section" id="g-troubleshoot">
+      <table class="atable">
+        <tr><td>Dongle não aparece</td><td>Contato USB ruim ou permissão negada — reconecta o cabo OTG, confere se o Android pediu permissão e você aceitou.</td></tr>
+        <tr><td>Espectro parado</td><td>Não apertou o play, ou ganho baixo demais — confirma o botão verde ativo, sobe o ganho manual.</td></tr>
+        <tr><td>Áudio chiado/distorcido</td><td>Ganho alto demais (saturando) — desce o ganho manual gradualmente.</td></tr>
+        <tr><td>Áudio fraco, cheio de ruído</td><td>Ganho baixo demais, ou antena mal posicionada/comprimento errado — sobe o ganho, confere a antena esticada no comprimento certo e na vertical.</td></tr>
+        <tr><td>ADS-B/AIS sem nada aparecendo</td><td>Ganho baixo (sinal fraco), ou nenhum tráfego na área naquele momento — sobe o ganho pra ~40dB, confirma que há tráfego perto (aeroporto/porto próximo).</td></tr>
+      </table>
+    </div>
+
   </div>
 
 </div>
@@ -444,46 +573,46 @@
 const BANDS = [
   { name:"HF SSB/CW", fmin:1.8, fmax:30, def:14.2,
     demod:"SSB (LSB/USB)", bw:"2.4–3 kHz", squelch:"N/A (SSB não usa squelch)", gain:"Manual, Direct Sampling ligado",
-    sr:"2.4 MSPS ou menor", note:"Ative Direct Sampling (Q branch) na aba de Dispositivo — sem isso essa faixa fica fora do alcance do tuner normal. Antena precisa de contrapeso/terra." },
-  { name:"FM Broadcast", fmin:88, fmax:108, def:98,
-    demod:"WFM", bw:"200 kHz", squelch:"Deemphasis 50µs (JP/EU)", gain:"AGC ligado",
-    sr:"2.4 MSPS", note:"Sinal forte e contínuo — bom pra calibrar PPM travando numa estação conhecida antes de ir pra outras bandas." },
+    sr:"2.56 MSPS ou menor", note:"Ative Direct Sampling (Q branch) na aba de Dispositivo — sem isso essa faixa fica fora do alcance do tuner normal. Antena precisa de contrapeso/terra." },
+  { name:"FM Broadcast (JP)", fmin:76.1, fmax:94.9, def:85,
+    demod:"BFM", bw:"~15 kHz AF", squelch:"Deemphasis automática", gain:"Manual ~35dB ou AGC",
+    sr:"2.56 MSPS", note:"No Japão a faixa é 76.1–94.9 MHz (diferente do padrão internacional 88–108 MHz). Boa banda pra calibrar PPM travando numa estação forte conhecida." },
   { name:"VOR / ILS", fmin:108, fmax:118, def:112,
     demod:"VOR Demodulator", bw:"25 kHz", squelch:"N/A", gain:"Manual",
-    sr:"2.4 MSPS", note:"Plugin específico do SDRangel (não é AM genérico) — decodifica o radial/rumo automaticamente." },
+    sr:"2.56 MSPS", note:"Plugin específico do SDRangel (não é AM genérico) — decodifica o radial/rumo automaticamente." },
   { name:"Aeronáutico AM", fmin:118, fmax:137, def:127,
     demod:"AM", bw:"8–16 kHz", squelch:"Squelch ativo (PTT intermitente)", gain:"Manual, ~30-40dB",
-    sr:"2.4 MSPS", note:"Tráfego é intermitente — deixe o squelch ligado ou vai ouvir só ruído entre transmissões." },
+    sr:"2.56 MSPS", note:"Tráfego é intermitente — deixe o squelch ligado ou vai ouvir só ruído entre transmissões." },
   { name:"NOAA APT", fmin:137, fmax:138, def:137.1,
     demod:"WFM", bw:"34–40 kHz", squelch:"Squelch OFF (decoder precisa do sinal contínuo)", gain:"Manual, evitar saturação",
-    sr:"2.4 MSPS", note:"Telescópica funciona pra teste, mas V-dipole ou QFH dá polarização circular e resultado bem melhor no decode de imagem." },
+    sr:"2.56 MSPS", note:"Telescópica funciona pra teste, mas V-dipole ou QFH dá polarização circular e resultado bem melhor no decode de imagem." },
   { name:"AIS (navios)", fmin:161.9, fmax:162.1, def:161.975,
     demod:"AIS Demodulator", bw:"9.6 kHz (GMSK)", squelch:"N/A", gain:"Manual",
-    sr:"2.4 MSPS", note:"Dois canais simultâneos (161.975 e 162.025) dão cobertura completa — dá pra rodar dois VFOs ao mesmo tempo no SDRangel." },
+    sr:"2.56 MSPS", note:"Dois canais simultâneos (161.975 e 162.025) dão cobertura completa — dá pra rodar dois VFOs ao mesmo tempo no SDRangel." },
   { name:"Marinho VHF (voz)", fmin:156, fmax:162, def:156.8,
     demod:"NFM", bw:"25 kHz (ou 12.5 kHz)", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
-    sr:"2.4 MSPS", note:"156.800 MHz é o canal 16, canal internacional de chamada/socorro." },
+    sr:"2.56 MSPS", note:"156.800 MHz é o canal 16, canal internacional de chamada/socorro." },
   { name:"Ham 2m (VHF)", fmin:144, fmax:148, def:145.5,
     demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
-    sr:"2.4 MSPS", note:"Banda de voz — squelch evita ficar escutando ruído de fundo o tempo todo." },
+    sr:"2.56 MSPS", note:"Banda de voz — squelch evita ficar escutando ruído de fundo o tempo todo." },
   { name:"APRS", fmin:144.3, fmax:145, def:144.66,
     demod:"Packet (AFSK1200)", bw:"12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
-    sr:"2.4 MSPS", note:"144.660 MHz é o padrão no Japão (144.390 nas Américas, 144.800 na Europa) — ajuste conforme a região." },
+    sr:"2.56 MSPS", note:"144.660 MHz é o padrão no Japão (144.390 nas Américas, 144.800 na Europa) — ajuste conforme a região." },
   { name:"Rádio livre JP (特小)", fmin:422.05, fmax:422.3, def:422.2,
     demod:"NFM", bw:"8.5–12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
-    sr:"2.4 MSPS", note:"特定小電力トランシーバー — 422.050–422.175MHz uso geral, 422.200–422.300MHz uso lazer. Sem licença, potência limitada a 10mW." },
+    sr:"2.56 MSPS", note:"特定小電力トランシーバー — 422.050–422.175MHz uso geral, 422.200–422.300MHz uso lazer. Sem licença, potência limitada a 10mW." },
   { name:"Ham 70cm (UHF)", fmin:430, fmax:440, def:433,
     demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual, ~35-40dB",
-    sr:"2.4 MSPS", note:"Mesma lógica do 2m, telescópica nessa faixa fica bem curta (~17cm) — fácil de fazer física mesmo." },
+    sr:"2.56 MSPS", note:"Mesma lógica do 2m, telescópica nessa faixa fica bem curta (~17cm) — fácil de fazer física mesmo." },
   { name:"Voz digital (DMR/P25/D-STAR)", fmin:400, fmax:470, def:440,
     demod:"DSD (DMR/dPMR/D-STAR/NXDN/P25)", bw:"12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
-    sr:"2.4 MSPS", note:"O canal exato varia por região/operadora — verifique a lista de repetidoras digitais locais antes de sintonizar." },
+    sr:"2.56 MSPS", note:"O canal exato varia por região/operadora — verifique a lista de repetidoras digitais locais antes de sintonizar." },
   { name:"Pager (POCSAG)", fmin:148, fmax:174, def:153.05,
     demod:"Pager Demodulator", bw:"12.5–25 kHz", squelch:"N/A", gain:"Manual",
-    sr:"2.4 MSPS", note:"Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços." },
+    sr:"2.56 MSPS", note:"Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços." },
   { name:"ADS-B", fmin:1090, fmax:1090, def:1090,
     demod:"ADS-B Demodulator", bw:"2 MHz (modo específico)", squelch:"N/A — modo de pulso", gain:"Manual alto, LNA recomendado",
-    sr:"2.4–3.2 MSPS", note:"Telescópica é bem subótima aqui (6.9cm ideal, ganho baixo). Antena colinear dedicada 1090MHz rende muito mais alcance." },
+    sr:"2.56–3.2 MSPS", note:"Telescópica é bem subótima aqui (6.9cm ideal, ganho baixo). Antena colinear dedicada 1090MHz rende muito mais alcance." },
 ];
 
 /* quick balloon text + link target (guide anchor id) */
@@ -583,8 +712,8 @@ function update(f){
   updateActiveButtons(f);
 
   const lambda_m = 300 / f;
-  const quarterM = 71.25 / f;
-  const halfLegM = 71.25 / f;
+  const quarterM = 71.5 / f;
+  const halfLegM = 71.5 / f;
 
   document.getElementById('lam').textContent = lambda_m >= 1 ? fmt(lambda_m,2)+' m' : fmt(lambda_m*100,1)+' cm';
   document.getElementById('q1').textContent = quarterM >= 1 ? fmt(quarterM,2)+' m' : fmt(quarterM*100,1)+' cm';
@@ -615,7 +744,7 @@ function update(f){
     bwEl.textContent = '—';
     sqEl.textContent = '—';
     gainEl.textContent = 'AGC ligado, ajustar depois';
-    srEl.textContent = '2.4 MSPS (padrão)';
+    srEl.textContent = '2.56 MSPS (padrão)';
     noteEl.textContent = 'Frequência fora dos presets — parâmetros exatos dependem do tipo de sinal que você está mirando.';
   }
 }
