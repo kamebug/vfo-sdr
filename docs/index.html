@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2Z4173R5NS"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D6TV7ZP8HZ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-2Z4173R5NS');
+  gtag('config', 'G-D6TV7ZP8HZ');
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -168,6 +168,70 @@
   .fav-row .fav-del:hover{color:var(--red);}
   .fav-empty{font-size:12.5px; color:var(--text-dim); text-align:center; padding:8px 0;}
   .fav-empty.hidden{display:none;}
+  .fav-io{display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
+  .fav-row .fav-actions{display:flex; gap:4px; flex-shrink:0;}
+  .fav-row .fav-icon-btn{
+    background:none; border:none; color:var(--text-dim); font-size:13px; cursor:pointer;
+    padding:3px 5px; line-height:1;
+  }
+  .fav-row .fav-icon-btn:hover{ color:var(--teal); }
+  .fav-row .fav-del:hover{ color:var(--red); }
+  .fav-label-input{
+    background:var(--panel); border:1px solid var(--teal-dim); color:var(--text);
+    font-size:13px; font-weight:600; padding:2px 5px; border-radius:3px; width:100%; outline:none;
+  }
+  .hist-list{display:flex; flex-direction:column; gap:4px;}
+  .hist-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--panel-raised); border:1px solid var(--line); border-radius:5px;
+    padding:7px 12px; cursor:pointer; font-family:var(--mono); font-size:12.5px;
+  }
+  .hist-row:hover{ border-color:var(--teal-dim); }
+  .hist-row .hist-time{ color:var(--text-dim); font-size:10.5px; }
+
+  /* ---- laboratório ---- */
+  .lab-row{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; align-items:center;}
+  .lab-row input[type="number"]{
+    flex:1; min-width:80px; background:var(--panel-raised); border:1px solid var(--line); color:var(--text);
+    font-family:var(--mono); font-size:14px; padding:8px 10px; border-radius:5px; outline:none;
+  }
+  .lab-row select{
+    background:var(--panel-raised); border:1px solid var(--line); color:var(--text);
+    font-family:var(--sans); font-size:13px; padding:8px 10px; border-radius:5px; outline:none;
+  }
+  .lab-row .unit-inline{ font-family:var(--mono); font-size:12.5px; color:var(--text-dim); }
+  .mini-btn{
+    background:var(--panel-raised); border:1px solid var(--teal-dim); color:var(--teal);
+    font-size:11.5px; font-weight:600; padding:7px 10px; border-radius:5px; cursor:pointer; white-space:nowrap;
+  }
+  .mini-btn:hover{ background:var(--teal-dim); color:var(--text); }
+  .chip-row{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .chip{
+    background:var(--panel-raised); border:1px solid var(--line); color:var(--text-dim);
+    font-size:12px; font-weight:600; padding:7px 12px; border-radius:20px; cursor:pointer;
+  }
+  .chip:hover{ border-color:var(--teal-dim); }
+  .chip.active{ border-color:var(--teal); color:var(--teal); background:rgba(0,168,150,.12); }
+  .scroll-x{ overflow-x:auto; }
+  .cmp-table{ min-width:560px; }
+  .cmp-table td{ font-size:11.5px; padding:7px 8px; }
+  .cmp-table tr td:first-child{ color:var(--text-dim); font-family:var(--sans); }
+  .cmp-table tr:first-child td{ color:var(--teal); font-weight:700; font-family:var(--sans); font-size:12px; }
+  .diag-item{
+    background:var(--panel-raised); border:1px solid var(--line); border-radius:5px;
+    padding:9px 12px; margin-bottom:6px; font-size:12.5px; display:flex; align-items:flex-start; gap:8px; cursor:pointer;
+  }
+  .diag-item .box{
+    width:16px; height:16px; border:1px solid var(--teal-dim); border-radius:3px; flex-shrink:0; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--teal);
+  }
+  .diag-item.checked{ border-color:var(--teal-dim); }
+  .diag-item.checked .box{ background:var(--teal-dim); }
+  .diag-result{
+    margin-top:10px; padding:10px 12px; border-radius:5px; background:rgba(0,168,150,.1);
+    border:1px solid var(--teal-dim); font-size:12.5px; color:var(--text); display:none;
+  }
+  .diag-result.show{ display:block; }
 
   .qbtn{
     width:16px; height:16px; border-radius:50%;
@@ -234,6 +298,7 @@
     <span class="brand">VFO</span>
     <div class="tabs">
       <button class="tab-btn active" data-view="calc">Calculadora</button>
+      <button class="tab-btn" data-view="lab">Laboratório</button>
       <button class="tab-btn" data-view="guia">Guia</button>
     </div>
   </div>
@@ -264,6 +329,17 @@
       </div>
       <div class="fav-list" id="favList"></div>
       <div class="fav-empty" id="favEmpty">Nenhum favorito salvo ainda.</div>
+      <div class="fav-io">
+        <button class="mini-btn" id="favExportBtn">⬇ Exportar</button>
+        <button class="mini-btn" id="favImportBtn">⬆ Importar</button>
+        <input type="file" id="favImportFile" accept="application/json" style="display:none">
+      </div>
+    </div>
+
+    <div class="card" id="histCard">
+      <h2>Histórico</h2>
+      <div class="hist-list" id="histList"></div>
+      <div class="fav-empty" id="histEmpty">Nenhuma sintonia recente ainda.</div>
     </div>
 
     <div class="presets" id="presets"></div>
@@ -295,6 +371,124 @@
     <div class="footer-note">
       λ/4 = 71.5 / f(MHz) · λ/2 (por perna) = 142.5 / (2·f(MHz)) · fator de velocidade 0.95 (fio nu)<br>
       Toque no ? de qualquer campo pra ver a explicação, ou abra a aba Guia pra tudo junto.
+    </div>
+  </div>
+
+  <!-- ===== VIEW: LABORATÓRIO ===== -->
+  <div class="view" id="view-lab">
+
+    <div class="card">
+      <h2>Conversor de Onda</h2>
+      <div class="lab-row">
+        <input type="number" id="labFreqIn" value="145.5" step="any">
+        <select id="labFreqUnit">
+          <option value="1e3">kHz</option>
+          <option value="1e6" selected>MHz</option>
+          <option value="1e9">GHz</option>
+          <option value="1">Hz</option>
+        </select>
+      </div>
+      <div class="readline"><span class="label-group">Comprimento de onda (λ)</span><span class="val" id="labLambda">—</span></div>
+      <div class="readline"><span class="label-group">Período</span><span class="val" id="labPeriodo">—</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Antena Avançada</h2>
+      <div class="chip-row" id="antTypeChips">
+        <button class="chip active" data-type="gp">Ground Plane</button>
+        <button class="chip" data-type="colinear">Colinear</button>
+        <button class="chip" data-type="loop">Loop</button>
+      </div>
+      <div class="lab-row">
+        <input type="number" id="antFreq" value="145.5" step="any">
+        <span class="unit-inline">MHz</span>
+        <button id="antUseCurrent" class="mini-btn" title="Usar frequência sintonizada">usar VFO</button>
+      </div>
+      <div id="antExtra"></div>
+      <div id="antOutputs"></div>
+      <div class="note" id="antNote"></div>
+    </div>
+
+    <div class="card">
+      <h2>Perda em Cabo Coaxial</h2>
+      <div class="lab-row">
+        <input type="number" id="coaxFreq" value="145.5" step="any">
+        <span class="unit-inline">MHz</span>
+      </div>
+      <div class="lab-row">
+        <select id="coaxType">
+          <option value="rg58">RG-58</option>
+          <option value="rg8x">RG-8X</option>
+          <option value="rg213">RG-213</option>
+          <option value="lmr400">LMR-400</option>
+          <option value="rg6">RG-6</option>
+        </select>
+        <input type="number" id="coaxLen" value="5" step="any">
+        <span class="unit-inline">m</span>
+      </div>
+      <div class="readline"><span class="label-group">Perda estimada</span><span class="val" id="coaxLoss">—</span></div>
+      <div class="readline"><span class="label-group">Potência restante na antena</span><span class="val" id="coaxPct">—</span></div>
+      <div class="note">Valores típicos de datasheet — variam por fabricante/lote. Pra distâncias curtas (RTL-SDR portátil) isso raramente é o gargalo; importa mais em instalações fixas com cabo longo.</div>
+    </div>
+
+    <div class="card">
+      <h2>Conversão dBi ↔ dBd</h2>
+      <div class="lab-row">
+        <input type="number" id="dbConvIn" value="0" step="any">
+        <select id="dbConvDir">
+          <option value="d2i">dBd → dBi</option>
+          <option value="i2d">dBi → dBd</option>
+        </select>
+      </div>
+      <div class="readline"><span class="label-group">Resultado</span><span class="val" id="dbConvOut">—</span></div>
+      <div class="note">dBi é o ganho em relação a uma antena isotrópica teórica; dBd é em relação a um dipolo de meia-onda real. dBi = dBd + 2.15.</div>
+    </div>
+
+    <div class="card">
+      <h2>SWR / Casamento de Impedância</h2>
+      <div class="chip-row" id="swrModeChips">
+        <button class="chip active" data-mode="z">Por impedância</button>
+        <button class="chip" data-mode="swr">Por SWR medido</button>
+      </div>
+      <div id="swrInputZ" class="lab-row">
+        <input type="number" id="swrZ" value="50" step="any">
+        <span class="unit-inline">Ω da antena</span>
+        <input type="number" id="swrZ0" value="50" step="any">
+        <span class="unit-inline">Ω do cabo (Z0)</span>
+      </div>
+      <div id="swrInputSwr" class="lab-row" style="display:none">
+        <input type="number" id="swrDirect" value="1.5" step="any" min="1">
+        <span class="unit-inline">SWR medido</span>
+      </div>
+      <div class="readline"><span class="label-group">SWR</span><span class="val" id="swrOut">—</span></div>
+      <div class="readline"><span class="label-group">Perda de retorno</span><span class="val" id="swrReturnLoss">—</span></div>
+      <div class="readline"><span class="label-group">Potência refletida</span><span class="val" id="swrReflected">—</span></div>
+      <div class="note">SWR até 1.5:1 é ótimo, até 2:1 é geralmente aceitável. Acima de 3:1 vale revisar a antena/comprimento — muita potência está voltando em vez de irradiar.</div>
+    </div>
+
+    <div class="card card-full">
+      <h2>Comparador de Antenas</h2>
+      <div class="scroll-x">
+        <table class="atable cmp-table">
+          <tr><td></td><td>Dipolo</td><td>Ground Plane</td><td>Colinear</td><td>Discone</td><td>Loop Mag.</td></tr>
+          <tr><td>Ganho</td><td>Referência (0dBd)</td><td>~0dBd</td><td>+3 a +6dB</td><td>-1 a 0dBd</td><td>Baixo (ativa)</td></tr>
+          <tr><td>Banda</td><td>Estreita</td><td>Estreita-média</td><td>Estreita</td><td>Muito larga</td><td>Estreita (sintonizável)</td></tr>
+          <tr><td>Polarização</td><td>Vertical/horiz.</td><td>Vertical</td><td>Vertical</td><td>Vertical</td><td>Ambas (orientação)</td></tr>
+          <tr><td>Custo</td><td>Baixo</td><td>Baixo</td><td>Médio</td><td>Médio</td><td>Médio-alto</td></tr>
+          <tr><td>Dificuldade</td><td>Fácil</td><td>Fácil</td><td>Média</td><td>Média</td><td>Fácil (comercial)</td></tr>
+          <tr><td>Melhor uso</td><td>Testes gerais</td><td>Fixo, ganho leve</td><td>Repetidora/fixo, alcance</td><td>Scanner banda larga</td><td>HF portátil</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card card-full">
+      <h2>Diagnóstico Rápido</h2>
+      <div class="chip-row" id="diagChips"></div>
+      <div id="diagChecklist"></div>
+    </div>
+
+    <div class="footer-note">
+      Laboratório: ferramentas de apoio — não substituem medição real (analisador de antena, SWR) pra trabalho crítico.
     </div>
   </div>
 
@@ -432,9 +626,70 @@
       <p>Não use telescópica genérica aqui — o ganho de antena importa muito nessa faixa e a telescópica capta mal. Instale o mais alto possível, livre de obstrução (telhado é ideal).</p>
       <p>Adicione a feature Map (Add Feature → Map) pra ver os aviões detectados voando em tempo real, com altitude e velocidade — não precisa demodular "de ouvido", os dados já chegam decodificados.</p>
     </div>
+    <div class="guide-section" id="g-adsb-campos">
+      <span class="tag">ADS-B Demodulator · campos do canal</span>
+      <h3>BW, SR, S, FP, Threshold</h3>
+      <p><b>BW</b> — largura de banda do canal dedicada ao ADS-B (2.6MHz é comum). <b>SR</b> — fator de decimação interno do demodulador em relação à taxa do dispositivo.</p>
+      <p><b>S</b> — liga a decodificação de frames Mode S adicionais (ELS, EHS, MRAR — dados meteorológicos e de vigilância avançada), além do ADS-B básico.</p>
+      <p><b>FP</b> — quando ligado, o demodulador correlaciona o sinal contra os 8 bits completos do preâmbulo (mais preciso, mais processamento); desligado, usa só os primeiros 6 bits (mais leve, mais chance de decodificar frames inválidos).</p>
+      <p><b>Threshold</b> — limiar de correlação em dB entre o sinal recebido e o preâmbulo esperado, necessário pra tentar decodificar um frame. Valores entre 5 e 7 costumam funcionar bem; mais baixo decodifica mais frames mas aumenta erros. A coluna "Correlation" na tabela de dados ajuda a calibrar esse valor observando aviões com sinal forte e confiável.</p>
+      <p>A barra de ícones abaixo das configurações liga/desliga camadas de exibição (aviões, aeroportos, lista de ICAO, notificações, PFD/instrumentos) e ações como salvar/exportar dados, abrir arquivo, centralizar no dispositivo, e baixar a base de dados de aeronaves (Opensky-Network) pra completar informações que o ADS-B sozinho não transmite (modelo, operadora).</p>
+    </div>
+
+    <div class="guide-group-title">Construção rápida</div>
+    <div class="guide-section" id="g-build-gp">
+      <span class="tag">Ground Plane</span>
+      <h3>Materiais e passo a passo</h3>
+      <p><b>Materiais:</b> conector SO-239 ou similar de painel, 1 haste rígida (radiador) e 3-4 hastes menores (radiais) — fio rígido de cobre ou vareta de solda funciona bem, cabo coaxial (RG-58 pra testes, LMR-400 pra fixo).</p>
+      <p><b>Passo a passo:</b> 1) corte o radiador no comprimento λ/4 calculado no Laboratório. 2) solde/parafuse no pino central do conector. 3) corte os radiais um pouco mais longos (a calculadora já aplica esse ajuste) e fixe na parte externa (terra) do conector, dobrados 30-45° pra baixo. 4) conecte o coax e teste com analisador de SWR se tiver, ou apenas ouça o sinal — dB muito baixo de recepção indica descasamento grosseiro.</p>
+    </div>
+    <div class="guide-section" id="g-build-loop">
+      <span class="tag">Loop (full-wave)</span>
+      <h3>Materiais e passo a passo</h3>
+      <p><b>Materiais:</b> fio rígido de cobre ou tubo de alumínio fino (mais rígido, mantém a forma), gamma match ou balun 1:1 no ponto de alimentação, suporte não-condutor (PVC, madeira) pra sustentar o formato.</p>
+      <p><b>Passo a passo:</b> 1) corte o fio no perímetro calculado no Laboratório. 2) forme um círculo ou quadrado (quad) usando o suporte. 3) uma abertura pequena no loop recebe o ponto de alimentação — conecte ali o coax, idealmente via um casamento de impedância (gamma match) já que a impedância de um loop full-wave costuma ficar acima de 50Ω. 4) oriente o plano do loop pra maximizar recepção na direção desejada (loop tem padrão direcional, ao contrário de dipolo/GP).</p>
+    </div>
+    <div class="guide-section" id="g-build-colinear">
+      <span class="tag">Colinear</span>
+      <h3>Materiais e passo a passo</h3>
+      <p><b>Materiais:</b> tubo de alumínio ou fio rígido pra cada elemento, bobinas de defasagem (enroladas à mão ou compradas prontas) ou stubs de cabo coaxial cortados no comprimento certo pra cada junção entre elementos, mastro de suporte.</p>
+      <p><b>Passo a passo:</b> é o tipo mais trabalhoso dos três — cada elemento de meia-onda precisa ser conectado ao próximo através de uma bobina ou stub que inverte a fase do sinal, senão os elementos cancelam em vez de somar ganho. Pra quem tá começando, vale mais a pena comprar uma colinear comercial pronta (geralmente calibrada de fábrica) do que construir do zero — o ganho real depende muito da precisão da defasagem, e um erro pequeno já derruba o ganho teórico calculado no Laboratório.</p>
+    </div>
+
+    <div class="guide-group-title">Posicionamento</div>
+    <div class="guide-section" id="g-posicionamento">
+      <h3>Polarização, altura e plano de terra — resumo</h3>
+      <table class="atable">
+        <tr><td>Polarização</td><td>A maioria das transmissões VHF/UHF terrestres (FM, aeronáutico, amador, marítimo, AIS, ADS-B) é vertical — mantenha a antena reta pra cima, não deitada. Satélites mudam de polarização durante a passagem (por isso QFH/V-dipole em vez de telescópica pra NOAA).</td></tr>
+        <tr><td>Altura</td><td>Importa mais que precisão de comprimento na prática — subir a antena (perto de janela, área externa, ponto alto) ajuda mais que acertar o comprimento com precisão milimétrica.</td></tr>
+        <tr><td>Plano de terra</td><td>Ground Plane e monopolos em geral precisam de radiais ou de uma superfície condutora (carroceria de carro, chapa metálica) fazendo esse papel — sem isso a impedância fica descasada e a eficiência cai.</td></tr>
+        <tr><td>HF</td><td>Loop magnética não precisa de plano de terra, mas é sensível a proximidade de metal/estruturas — mantenha alguma distância de objetos grandes.</td></tr>
+      </table>
+    </div>
+
+    <div class="guide-group-title">Banco de Hardware — além do RTL-SDR</div>
+    <div class="guide-section" id="g-hardware-bank">
+      <h3>Quando o RTL-SDR não é suficiente</h3>
+      <table class="atable">
+        <tr><td>RTL-SDR V4</td><td>ADC 8-bit (~48dB dynamic range), 500kHz–1.7GHz + HF via direct sampling, TCXO 1PPM. Bom custo-benefício, ponto de partida.</td></tr>
+        <tr><td>Airspy HF+ Discovery</td><td>ADC 18-bit, focado em HF — melhor opção pra shortwave/amador em HF sério. ~$169.</td></tr>
+        <tr><td>SDRplay RSPdx</td><td>ADC 14-bit (~84dB dynamic range), cobertura contínua 1kHz–2GHz num único aparelho, 10MHz de banda instantânea. ~$200.</td></tr>
+        <tr><td>HackRF One</td><td>1MHz–6GHz, até 20Msps, TX half-duplex — bom se quiser transmitir também, banda mais larga.</td></tr>
+        <tr><td>LimeSDR</td><td>MIMO 2x2, full duplex, ~61MSPS — pra quem quer largura de banda grande ou projetos com TX simultâneo.</td></tr>
+      </table>
+      <p>Combinação comum entre quem já tem RTL-SDR e quer HF sério: manter o RTL-SDR pra VHF/UHF/ADS-B e complementar com um Airspy HF+ ou SDRplay dedicado pra HF.</p>
+    </div>
 
     <div class="guide-group-title">Aba de Dispositivo (RTL-SDR Input)</div>
 
+    <div class="guide-section" id="g-android-device">
+      <h3>Dispositivo "Android" (quando o RTL não está conectado)</h3>
+      <p>Se o RTL-SDR não estiver plugado, o SDRangel Android mostra um dispositivo genérico chamado "Android" em vez do "RTL-SDR" — é uma fonte de IQ via rede (recebe amostras por TCP numa porta, em vez de USB direto). Os campos mudam de nome:</p>
+      <p><b>DC / IQ / T / DS</b> — os mesmos quatro corretores do RTL-SDR (DC offset, IQ imbalance, Bias Tee, Direct Sampling), só que como botões curtos em vez de nomes completos.</p>
+      <p><b>IQ (bits)</b> — resolução das amostras recebidas pela rede (8/16/24 bits).</p>
+      <p><b>Port</b> — porta TCP local onde o SDRangel escuta a stream de IQ (1234 é o padrão).</p>
+      <p>Com o RTL-SDR de verdade conectado via OTG, esse painel muda pra mostrar "RTL-SDR" com os campos descritos na tabela abaixo (LNA Gain, Bias Tee nomeado por extenso, etc.).</p>
+    </div>
     <div class="guide-section" id="g-coverage">
       <h3>Faixa do dongle / Center Frequency</h3>
       <p>A frequência central que o tuner do RTL vai sintonizar. Os canais/demoduladores depois "recortam" uma fatia dentro dessa faixa capturada. O RTL-SDR V4 cobre 500kHz–1.7GHz nativamente (abaixo disso, via direct sampling).</p>
@@ -485,18 +740,19 @@
     <div class="guide-section" id="g-demod">
       <h3>Demodulador (WFM / NFM / AM / SSB / ADS-B...)</h3>
       <p>Define o tipo de decodificação aplicada ao sinal isolado. Escolha conforme o tipo de transmissão: WFM pra broadcast, NFM pra voz VHF/UHF, AM pra aeronáutico, SSB pra HF/amador, e modos específicos (ADS-B Demodulator, DSD, etc.) pra sinais digitais.</p>
+      <p><b>No app:</b> cada canal aberto mostra "Δf" no topo — é o desvio de frequência daquele canal em relação ao Center Frequency do dispositivo, não a frequência absoluta. Tem também um ícone de cadeado (trava o Δf) e um triângulo (mute/alarme de sinal).</p>
     </div>
     <div class="guide-section" id="g-bw">
-      <h3>RF / Channel Bandwidth</h3>
-      <p>Largura do filtro que isola o sinal desejado dentro do espectro já capturado pelo dispositivo. Estreito demais corta parte do sinal; largo demais deixa entrar ruído ou sinais vizinhos.</p>
+      <h3>RF BW (aparece assim na tela)</h3>
+      <p>Largura do filtro que isola o sinal desejado dentro do espectro já capturado pelo dispositivo. Estreito demais corta parte do sinal; largo demais deixa entrar ruído ou sinais vizinhos. No AM Demodulator o padrão é 5.0 kHz; no WFM aparece como "RFBW" com um mostrador de dígitos (igual o VFO desse app), com 80.000 Hz sendo um valor comum.</p>
     </div>
     <div class="guide-section" id="g-afbw">
-      <h3>AF Bandwidth</h3>
-      <p>Filtro na saída de áudio, depois da demodulação — corta frequências de áudio fora da faixa útil (ex: acima de 3kHz numa voz), deixando o áudio mais limpo.</p>
+      <h3>AF BW (aparece assim na tela)</h3>
+      <p>Filtro na saída de áudio, depois da demodulação — corta frequências de áudio fora da faixa útil, deixando o áudio mais limpo. No AM Demodulator o padrão é 5.0 kHz; no WFM, 15 kHz é o valor típico pra broadcast estéreo. Tem um ícone de "onda" ao lado que alterna entre modo automático e manual do filtro.</p>
     </div>
     <div class="guide-section" id="g-squelch">
-      <h3>Squelch</h3>
-      <p>Silencia o áudio quando o sinal está abaixo de um limiar (em dB), evitando escutar ruído entre transmissões. Essencial em bandas de voz intermitente (aeronáutico, rádio amador). Em broadcast contínuo (FM) geralmente não precisa.</p>
+      <h3>Sq (Squelch, aparece assim na tela)</h3>
+      <p>Silencia o áudio quando o sinal está abaixo de um limiar (em dB), evitando escutar ruído entre transmissões. Essencial em bandas de voz intermitente (aeronáutico, rádio amador). Em broadcast contínuo (FM) geralmente não precisa — nos exemplos reais, AM usa algo como -40dB e WFM algo como -60dB como ponto de partida; ajuste ouvindo até o ruído de fundo sumir sem cortar o sinal real.</p>
     </div>
     <div class="guide-section" id="g-squelchdelay">
       <h3>Squelch Delay / Hang Time</h3>
@@ -515,8 +771,8 @@
       <p>Define a excursão de frequência esperada do sinal FM. Broadcast usa deviation bem maior que NFM de voz — configurado errado, o áudio sai distorcido ou muito baixo.</p>
     </div>
     <div class="guide-section" id="g-volume">
-      <h3>Volume</h3>
-      <p>Ganho de saída de áudio — só afeta o que você ouve, não interfere na demodulação em si.</p>
+      <h3>Vol (Volume, aparece assim na tela)</h3>
+      <p>Ganho de saída de áudio — só afeta o que você ouve, não interfere na demodulação em si. Padrão costuma vir em 2.0 nos demoduladores de voz/broadcast.</p>
     </div>
     <div class="guide-section" id="g-audiodevice">
       <h3>Audio Output Device</h3>
@@ -716,6 +972,8 @@ function update(f){
   renderVfo(currentHz);
   freqInput.value = f;
   updateActiveButtons(f);
+  syncUrl(f);
+  scheduleHistoryAdd(currentHz);
 
   const lambda_m = 300 / f;
   const quarterM = 71.5 / f;
@@ -768,6 +1026,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('view-' + btn.dataset.view).classList.add('active');
+    gaEvent('tab_view', { tab_name: btn.dataset.view });
     closeBalloon();
     window.scrollTo({top:0});
   });
@@ -827,6 +1086,11 @@ document.addEventListener('click', (e) => {
 });
 window.addEventListener('scroll', closeBalloon, true);
 
+/* ---------------- Google Analytics: helper de eventos ---------------- */
+function gaEvent(name, params){
+  if (typeof gtag === 'function') { gtag('event', name, params || {}); }
+}
+
 /* ---------------- favoritos ---------------- */
 const FAV_KEY = 'vfo_favorites';
 let favorites = [];
@@ -861,17 +1125,51 @@ function renderFavorites(){
         <span class="fav-label">${fav.label}</span>
         <span class="fav-freq">${fmtFreqLabel(fav.hz)}</span>
       </div>
-      <button class="fav-del" title="Remover">×</button>
+      <div class="fav-actions">
+        <button class="fav-icon-btn fav-share" title="Compartilhar">⤴</button>
+        <button class="fav-icon-btn fav-edit" title="Renomear">✎</button>
+        <button class="fav-icon-btn fav-del" title="Remover">×</button>
+      </div>
     `;
     row.addEventListener('click', (e) => {
-      if (e.target.classList.contains('fav-del')) return;
+      if (e.target.closest('.fav-actions')) return;
       setFreq(fav.hz / 1e6);
     });
     row.querySelector('.fav-del').addEventListener('click', (e) => {
       e.stopPropagation();
+      gaEvent('fav_delete', { freq_mhz: fav.hz/1e6 });
       favorites.splice(i, 1);
       saveFavorites();
       renderFavorites();
+    });
+    row.querySelector('.fav-edit').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const labelEl = row.querySelector('.fav-label');
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'fav-label-input';
+      input.value = fav.label;
+      labelEl.replaceWith(input);
+      input.focus();
+      input.select();
+      const commit = () => {
+        fav.label = input.value.trim() || fmtFreqLabel(fav.hz);
+        gaEvent('fav_rename', { freq_mhz: fav.hz/1e6 });
+        saveFavorites();
+        renderFavorites();
+      };
+      input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') input.blur(); });
+      input.addEventListener('blur', commit);
+    });
+    row.querySelector('.fav-share').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      gaEvent('fav_share', { freq_mhz: fav.hz/1e6 });
+      const url = location.origin + location.pathname + '?freq=' + (fav.hz/1e6).toFixed(6);
+      const shareData = { title: 'VFO: ' + fav.label, text: fav.label + ' — ' + fmtFreqLabel(fav.hz), url };
+      try {
+        if (navigator.share) { await navigator.share(shareData); }
+        else { await navigator.clipboard.writeText(url); alert('Link copiado: ' + url); }
+      } catch (err) { /* usuário cancelou o share — sem problema */ }
     });
     favList.appendChild(row);
   });
@@ -879,6 +1177,7 @@ function renderFavorites(){
 
 favSaveBtn.addEventListener('click', () => {
   const label = favLabel.value.trim() || fmtFreqLabel(currentHz);
+  gaEvent('fav_save', { freq_mhz: currentHz/1e6 });
   favorites.unshift({ label, hz: currentHz });
   favLabel.value = '';
   saveFavorites();
@@ -886,10 +1185,335 @@ favSaveBtn.addEventListener('click', () => {
 });
 favLabel.addEventListener('keydown', (e) => { if (e.key === 'Enter') favSaveBtn.click(); });
 
+document.getElementById('favExportBtn').addEventListener('click', () => {
+  gaEvent('fav_export', { count: favorites.length });
+  const blob = new Blob([JSON.stringify(favorites, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'vfo-favoritos.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+const favImportFile = document.getElementById('favImportFile');
+document.getElementById('favImportBtn').addEventListener('click', () => favImportFile.click());
+favImportFile.addEventListener('change', () => {
+  const file = favImportFile.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!Array.isArray(imported)) throw new Error('formato inválido');
+      const valid = imported.filter(f => f && typeof f.hz === 'number' && typeof f.label === 'string');
+      favorites = valid.concat(favorites);
+      saveFavorites();
+      renderFavorites();
+      gaEvent('fav_import', { count: valid.length });
+      alert(valid.length + ' favorito(s) importado(s).');
+    } catch (err) {
+      alert('Arquivo inválido — precisa ser um JSON exportado por este app.');
+    }
+    favImportFile.value = '';
+  };
+  reader.readAsText(file);
+});
+
+/* ---------------- URL com frequência ---------------- */
+function syncUrl(freqMHz){
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('freq', freqMHz.toFixed(6).replace(/0+$/,'').replace(/\.$/,''));
+    history.replaceState(null, '', url);
+  } catch (e) { /* ambiente sem suporte a History API — sem problema, só não atualiza a URL */ }
+}
+function getFreqFromUrl(){
+  try {
+    const params = new URLSearchParams(location.search);
+    const f = parseFloat(params.get('freq'));
+    return (!isNaN(f) && f > 0) ? f : null;
+  } catch (e) { return null; }
+}
+
+/* ---------------- histórico automático ---------------- */
+const HIST_KEY = 'vfo_history';
+const HIST_MAX = 15;
+let tuneHistory = [];
+try { tuneHistory = JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch (e) { tuneHistory = []; }
+let historyDebounce = null;
+
+function scheduleHistoryAdd(hz){
+  clearTimeout(historyDebounce);
+  historyDebounce = setTimeout(() => addToHistory(hz), 1200);
+}
+function addToHistory(hz){
+  if (tuneHistory.length && tuneHistory[0].hz === hz) return;
+  tuneHistory.unshift({ hz, t: Date.now() });
+  tuneHistory = tuneHistory.slice(0, HIST_MAX);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(tuneHistory)); } catch (e) {}
+  renderHistory();
+}
+function relTime(ts){
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return 'agora';
+  if (diffMin < 60) return diffMin + 'min atrás';
+  const diffH = Math.round(diffMin/60);
+  if (diffH < 24) return diffH + 'h atrás';
+  return Math.round(diffH/24) + 'd atrás';
+}
+function renderHistory(){
+  const histList = document.getElementById('histList');
+  const histEmpty = document.getElementById('histEmpty');
+  histList.innerHTML = '';
+  histEmpty.classList.toggle('hidden', tuneHistory.length > 0);
+  tuneHistory.forEach(entry => {
+    const row = document.createElement('div');
+    row.className = 'hist-row';
+    row.innerHTML = `<span>${fmtFreqLabel(entry.hz)}</span><span class="hist-time">${relTime(entry.t)}</span>`;
+    row.addEventListener('click', () => setFreq(entry.hz / 1e6));
+    histList.appendChild(row);
+  });
+}
+
+/* ---------------- laboratório: conversor de onda ---------------- */
+const labFreqIn = document.getElementById('labFreqIn');
+const labFreqUnit = document.getElementById('labFreqUnit');
+function updateLab(){
+  const hz = parseFloat(labFreqIn.value) * parseFloat(labFreqUnit.value);
+  if (!hz || hz <= 0) return;
+  const lambda = 299792458 / hz;
+  const periodo = 1 / hz;
+  document.getElementById('labLambda').textContent = lambda >= 1 ? fmt(lambda,3)+' m' : fmt(lambda*100,2)+' cm';
+  let periodoStr;
+  if (periodo >= 1) periodoStr = fmt(periodo,3)+' s';
+  else if (periodo >= 1e-3) periodoStr = fmt(periodo*1e3,3)+' ms';
+  else if (periodo >= 1e-6) periodoStr = fmt(periodo*1e6,3)+' µs';
+  else periodoStr = fmt(periodo*1e9,3)+' ns';
+  document.getElementById('labPeriodo').textContent = periodoStr;
+}
+labFreqIn.addEventListener('input', updateLab);
+labFreqUnit.addEventListener('change', updateLab);
+
+/* ---------------- laboratório: antena avançada ---------------- */
+const antFreq = document.getElementById('antFreq');
+const antExtra = document.getElementById('antExtra');
+const antOutputs = document.getElementById('antOutputs');
+const antNote = document.getElementById('antNote');
+let antType = 'gp';
+
+document.getElementById('antUseCurrent').addEventListener('click', () => {
+  antFreq.value = (currentHz / 1e6).toFixed(4);
+  updateAnt();
+});
+
+document.querySelectorAll('#antTypeChips .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#antTypeChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    antType = chip.dataset.type;
+    updateAnt();
+  });
+});
+
+function line(label, val){ return `<div class="readline"><span class="label-group">${label}</span><span class="val">${val}</span></div>`; }
+
+function updateAnt(){
+  const f = parseFloat(antFreq.value);
+  if (!f || f <= 0) { antOutputs.innerHTML = ''; antExtra.innerHTML = ''; antNote.textContent=''; return; }
+  const quarterM = 71.5 / f;
+
+  if (antType === 'gp') {
+    antExtra.innerHTML = '';
+    const radialM = quarterM * 1.05;
+    antOutputs.innerHTML =
+      line('Radiador (λ/4)', quarterM>=1?fmt(quarterM,2)+' m':fmt(quarterM*100,1)+' cm') +
+      line('Radiais (cada um)', radialM>=1?fmt(radialM,2)+' m':fmt(radialM*100,1)+' cm') +
+      line('Ângulo dos radiais', '30–45° abaixo da horizontal') +
+      line('Nº de radiais', '3–4 (mínimo funcional)');
+    antNote.textContent = 'Radiais um pouco mais longos que o radiador e inclinados ajudam a casar a impedância pra perto de 50Ω (coax padrão).';
+  }
+  else if (antType === 'colinear') {
+    if (!antExtra.querySelector('#colN')) {
+      antExtra.innerHTML = '<div class="lab-row"><span class="unit-inline">Nº de elementos</span><input type="number" id="colN" value="2" min="2" max="8" step="1"></div>';
+      antExtra.querySelector('#colN').addEventListener('input', updateAnt);
+    }
+    const n = Math.max(2, parseInt(antExtra.querySelector('#colN').value, 10) || 2);
+    const gainDbi = 2.15 + 10*Math.log10(n);
+    const elemM = quarterM * 2; // meia-onda por elemento
+    const totalApprox = elemM * n;
+    antOutputs.innerHTML =
+      line('Cada elemento (λ/2)', elemM>=1?fmt(elemM,2)+' m':fmt(elemM*100,1)+' cm') +
+      line('Ganho teórico estimado', fmt(gainDbi,1)+' dBi') +
+      line('Comprimento total aprox.', totalApprox>=1?fmt(totalApprox,2)+' m':fmt(totalApprox*100,1)+' cm');
+    antNote.textContent = 'Estimativa teórica ideal (array de N elementos em fase) — construção real com bobinas/stubs de defasagem tem perdas, ganho prático fica abaixo disso.';
+  }
+  else if (antType === 'loop') {
+    antExtra.innerHTML = '';
+    const lambda_m = 300 / f;
+    const perimeterM = lambda_m * 1.02;
+    const diameterM = perimeterM / Math.PI;
+    const sideM = perimeterM / 4;
+    antOutputs.innerHTML =
+      line('Perímetro (loop full-wave)', perimeterM>=1?fmt(perimeterM,2)+' m':fmt(perimeterM*100,1)+' cm') +
+      line('Diâmetro (se circular)', diameterM>=1?fmt(diameterM,2)+' m':fmt(diameterM*100,1)+' cm') +
+      line('Lado (se quadrado/quad)', sideM>=1?fmt(sideM,2)+' m':fmt(sideM*100,1)+' cm');
+    antNote.textContent = 'Isso é pro loop ressonante de onda completa (ganho sobre dipolo). Loop magnética ativa tipo MLA-30 é outra categoria — pequena e eletronicamente compensada, não segue essa fórmula.';
+  }
+}
+antFreq.addEventListener('input', updateAnt);
+
+/* ---------------- laboratório: perda em cabo coaxial ---------------- */
+// Atenuação típica em dB/100ft por frequência (MHz), valores de datasheet aproximados
+const COAX_TABLES = {
+  rg58:   {f:[10,50,100,200,400,900,1000,1500,2000], db:[1.3,3.3,4.9,7.0,10.4,16.6,17.6,22.0,26.0]},
+  rg8x:   {f:[10,50,100,200,400,900,1000,1500,2000], db:[0.7,1.8,2.6,3.7,5.5,8.9,9.4,11.8,13.9]},
+  rg213:  {f:[10,50,100,200,400,900,1000,1500,2000], db:[0.5,1.2,1.8,2.6,3.9,6.3,6.7,8.4,10.0]},
+  lmr400: {f:[10,50,100,200,400,900,1000,1500,2000], db:[0.2,0.5,0.7,1.0,1.5,2.4,2.6,3.2,3.8]},
+  rg6:    {f:[10,50,100,200,400,900,1000,1500,2000], db:[0.6,1.5,2.2,3.1,4.5,7.0,7.4,9.2,10.8]},
+};
+function interpLogLog(xs, ys, x){
+  x = Math.max(xs[0], Math.min(xs[xs.length-1], x));
+  for (let i = 0; i < xs.length-1; i++){
+    if (x >= xs[i] && x <= xs[i+1]){
+      const lx0=Math.log10(xs[i]), lx1=Math.log10(xs[i+1]);
+      const ly0=Math.log10(ys[i]), ly1=Math.log10(ys[i+1]);
+      const t = (Math.log10(x)-lx0)/(lx1-lx0);
+      return Math.pow(10, ly0 + t*(ly1-ly0));
+    }
+  }
+  return ys[ys.length-1];
+}
+function updateCoax(){
+  const f = parseFloat(document.getElementById('coaxFreq').value);
+  const lenM = parseFloat(document.getElementById('coaxLen').value);
+  const type = document.getElementById('coaxType').value;
+  if (!f || f<=0 || !lenM || lenM<=0) return;
+  const table = COAX_TABLES[type];
+  const dbPer100ft = interpLogLog(table.f, table.db, f);
+  const lenFt = lenM * 3.28084;
+  const lossDb = dbPer100ft * (lenFt/100);
+  const pctRemaining = Math.pow(10, -lossDb/10) * 100;
+  document.getElementById('coaxLoss').textContent = fmt(lossDb,2)+' dB';
+  document.getElementById('coaxPct').textContent = fmt(pctRemaining,1)+' %';
+}
+['coaxFreq','coaxLen','coaxType'].forEach(id => document.getElementById(id).addEventListener('input', updateCoax));
+document.getElementById('coaxType').addEventListener('change', updateCoax);
+
+/* ---------------- laboratório: SWR / impedância ---------------- */
+let swrMode = 'z';
+document.querySelectorAll('#swrModeChips .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#swrModeChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    swrMode = chip.dataset.mode;
+    document.getElementById('swrInputZ').style.display = swrMode === 'z' ? 'flex' : 'none';
+    document.getElementById('swrInputSwr').style.display = swrMode === 'swr' ? 'flex' : 'none';
+    updateSwr();
+  });
+});
+function updateSwr(){
+  let swr;
+  if (swrMode === 'z') {
+    const z = parseFloat(document.getElementById('swrZ').value);
+    const z0 = parseFloat(document.getElementById('swrZ0').value);
+    if (!z || !z0 || z<=0 || z0<=0) return;
+    swr = Math.max(z, z0) / Math.min(z, z0);
+  } else {
+    swr = parseFloat(document.getElementById('swrDirect').value);
+    if (!swr || swr < 1) return;
+  }
+  const gamma = (swr - 1) / (swr + 1);
+  const returnLossDb = gamma > 0 ? -20 * Math.log10(gamma) : Infinity;
+  const reflectedPct = gamma * gamma * 100;
+  document.getElementById('swrOut').textContent = fmt(swr,2) + ':1';
+  document.getElementById('swrReturnLoss').textContent = isFinite(returnLossDb) ? fmt(returnLossDb,1)+' dB' : '∞';
+  document.getElementById('swrReflected').textContent = fmt(reflectedPct,2) + ' %';
+}
+['swrZ','swrZ0','swrDirect'].forEach(id => document.getElementById(id).addEventListener('input', updateSwr));
+
+/* ---------------- laboratório: dBi <-> dBd ---------------- */
+function updateDbConv(){
+  const v = parseFloat(document.getElementById('dbConvIn').value);
+  const dir = document.getElementById('dbConvDir').value;
+  if (isNaN(v)) return;
+  const out = dir === 'd2i' ? v + 2.15 : v - 2.15;
+  document.getElementById('dbConvOut').textContent = fmt(out,2) + (dir === 'd2i' ? ' dBi' : ' dBd');
+}
+document.getElementById('dbConvIn').addEventListener('input', updateDbConv);
+document.getElementById('dbConvDir').addEventListener('change', updateDbConv);
+
+/* ---------------- laboratório: diagnóstico rápido ---------------- */
+const DIAGNOSTICS = {
+  'Sem sinal nenhum': {
+    items: ['Dongle aparece na lista de dispositivos?', 'Antena conectada no SMA?', 'Apertou o botão play (captura ativa)?', 'Ganho não está em 0 ou muito baixo?'],
+    result: 'Se tudo isso estiver ok e ainda assim nada aparece, reconecta o cabo USB/OTG — contato ruim é a causa mais comum.'
+  },
+  'ADS-B sem aviões': {
+    items: ['Antena é dedicada 1090MHz ou pelo menos telescópica de ~7cm?', 'Center Frequency em 1090MHz?', 'Ganho alto (~35-40dB)?', 'Threshold do ADS-B Demodulator entre 5-7dB?', 'Há tráfego aéreo perto (aeroporto próximo) nesse horário?'],
+    result: 'Se todos os itens acima estão ok, o problema costuma ser cobertura — ADS-B precisa de linha de visada, tente uma antena mais alta.'
+  },
+  'Áudio distorcido': {
+    items: ['Ganho não está saturando (linha reta no topo do waterfall)?', 'AGC ligado (tente desligar e ajustar manual)?', 'Squelch não está cortando no meio da fala?'],
+    result: 'Sinal saturado é a causa mais comum — desce o ganho manual gradualmente até o áudio limpar.'
+  },
+  'PPM/frequência errada': {
+    items: ['Testou travar numa estação FM forte e conhecida?', 'LO PPM Correction está em 0 (padrão de fábrica)?', 'Direct Sampling está desligado (a menos que esteja em HF)?'],
+    result: 'Ajuste o PPM até a frequência da estação bater exatamente — o RTL-SDR V4 já vem com TCXO preciso, raramente precisa de correção grande.'
+  },
+};
+const diagChips = document.getElementById('diagChips');
+const diagChecklist = document.getElementById('diagChecklist');
+Object.keys(DIAGNOSTICS).forEach((key, i) => {
+  const chip = document.createElement('button');
+  chip.className = 'chip' + (i===0 ? ' active' : '');
+  chip.textContent = key;
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#diagChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderDiag(key);
+  });
+  diagChips.appendChild(chip);
+});
+function renderDiag(key){
+  const d = DIAGNOSTICS[key];
+  diagChecklist.innerHTML = '';
+  d.items.forEach(text => {
+    const row = document.createElement('div');
+    row.className = 'diag-item';
+    row.innerHTML = `<span class="box"></span><span>${text}</span>`;
+    row.addEventListener('click', () => {
+      row.classList.toggle('checked');
+      row.querySelector('.box').textContent = row.classList.contains('checked') ? '✓' : '';
+      checkDiagComplete(key);
+    });
+    diagChecklist.appendChild(row);
+  });
+  const resultBox = document.createElement('div');
+  resultBox.className = 'diag-result';
+  resultBox.id = 'diagResult';
+  resultBox.textContent = d.result;
+  diagChecklist.appendChild(resultBox);
+}
+function checkDiagComplete(key){
+  const allChecked = [...diagChecklist.querySelectorAll('.diag-item')].every(i => i.classList.contains('checked'));
+  document.getElementById('diagResult').classList.toggle('show', allChecked);
+}
+renderDiag(Object.keys(DIAGNOSTICS)[0]);
+
 /* ---------------- init ---------------- */
 renderPresets();
 renderFavorites();
-setFreq(98);
+renderHistory();
+const urlFreq = getFreqFromUrl();
+setFreq(urlFreq || 98);
+updateLab();
+updateAnt();
+updateCoax();
+updateDbConv();
+updateSwr();
 
 /* ---------------- PWA service worker ---------------- */
 if ('serviceWorker' in navigator) {
