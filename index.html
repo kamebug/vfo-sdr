@@ -620,6 +620,35 @@
       <h3>Telescópica ajustada</h3>
       <p>Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços (hospitais, segurança). Demodulador "Pager Demodulator", sem squelch (decodifica em modo contínuo).</p>
     </div>
+    <div class="guide-section" id="g-antena-shobo">
+      <span class="tag">消防/防災無線 (Shōbō/Bōsai musen) · 148–154 MHz</span>
+      <h3>"Rádio de bombeiros e defesa civil" — telescópica ajustada</h3>
+      <p>消防無線 (shōbō musen) = rádio dos bombeiros; 防災行政無線 (bōsai gyōsei musen) = rádio de defesa civil municipal, usado pra avisos de emergência, terremoto, tsunami e anúncios públicos pelos alto-falantes de rua. NFM, squelch ativo. Muitas prefeituras já migraram pra digital em 260MHz nos últimos anos — se não pegar nada em claro nessa faixa analógica, é sinal de que a sua região já migrou.</p>
+    </div>
+    <div class="guide-section" id="g-antena-basu">
+      <span class="tag">バス無線 (Basu musen) · 149.31 MHz</span>
+      <h3>"Rádio de ônibus" — telescópica ajustada</h3>
+      <p>バス (basu) = ônibus; 無線 (musen) = rádio sem fio. Especificamente é o canal de ônibus de turismo (観光バス, kankō basu) — uma frequência única usada por todo ônibus de turismo do país inteiro. Perto de pontos turísticos populares costuma vir bem cheio de tráfego, com informação de trânsito e coordenação entre motoristas.</p>
+    </div>
+    <div class="guide-section" id="g-antena-kani">
+      <span class="tag">簡易業務無線 (Kan'i gyōmu musen) · 154.45–154.61 MHz</span>
+      <h3>"Rádio simplificado de uso comercial" — telescópica ajustada</h3>
+      <p>簡易 (kan'i) = simplificado/simples; 業務 (gyōmu) = trabalho/negócio; 無線 (musen) = rádio. Usado por empresas em geral, segurança de eventos e obras (警備無線, keibi musen), e serviços públicos menores (官公庁無線, kankōchō musen) que não têm frequência dedicada própria — todos compartilham essa faixa VHF analógica.</p>
+    </div>
+    <div class="guide-section" id="g-antena-kanidigital">
+      <span class="tag">簡易無線デジタル (Kan'i musen digital) · 351.17–351.38 MHz</span>
+      <h3>Versão digital (DCR) da faixa acima</h3>
+      <p>Mesmo uso do 簡易業務無線, mas em modo digital (DCR — Digital Convenience Radio). O SDRangel mostra a atividade no espectro/waterfall normalmente, mas não decodifica o áudio sem um plugin específico de DCR — trate como "ver que tem tráfego" em vez de "ouvir a conversa".</p>
+    </div>
+    <div class="guide-section" id="g-antena-mil">
+      <span class="tag">ミリタリー無線 (Mirtarī musen) · 225–400 MHz</span>
+      <h3>"Rádio militar" — telescópica curta, AM</h3>
+      <p>Faixa aeronáutica militar (UHF mil air band), padrão internacional usado por forças militares no mundo todo, incluindo bases no Japão. 243.000 MHz é a frequência internacional de emergência/guarda (equivalente militar do 121.500 civil). Demodulador AM, squelch ativo.</p>
+    </div>
+    <div class="guide-section" id="g-antena-naolistado">
+      <h3>鉄道無線 (Tetsudō musen) e マスコミ無線 (Masukomi musen)</h3>
+      <p>鉄道無線 = rádio ferroviário; マスコミ無線 = rádio de imprensa/mídia. Essas duas categorias do livro não entraram como preset porque a frequência exata varia muito por operadora/emissora e eu não tinha uma fonte confiável o suficiente pra cravar um número — prefiro deixar de fora a colocar algo impreciso. Se você achar o canal certo no livro pra sua região, me fala a frequência que eu já calculo os parâmetros de antena/SDRangel pra ela.</p>
+    </div>
     <div class="guide-section" id="g-antena-adsb">
       <span class="tag">ADS-B · 1090 MHz</span>
       <h3>Colinear dedicada 1090MHz</h3>
@@ -872,6 +901,21 @@ const BANDS = [
   { name:"Pager (POCSAG)", fmin:148, fmax:174, def:153.05,
     demod:"Pager Demodulator", bw:"12.5–25 kHz", squelch:"N/A", gain:"Manual",
     sr:"2.56 MSPS", note:"Frequência exata varia bastante por região — cada vez mais raro, mas ainda ativo em alguns serviços." },
+  { name:"消防/防災無線 (Shōbō/Bōsai)", fmin:148, fmax:154, def:150.79,
+    demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.56 MSPS", note:"Bombeiros e defesa civil (消防無線・防災行政無線). Muitos municípios já migraram pra digital em 260MHz — se não pegar nada em claro aqui, é sinal de que a região local já migrou." },
+  { name:"バス無線 (Basu musen)", fmin:149.31, fmax:149.31, def:149.31,
+    demod:"NFM", bw:"12.5–25 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.56 MSPS", note:"Rádio de ônibus de turismo (観光バス無線). Frequência única nacional — todo ônibus de turismo do Japão usa esse canal, por isso costuma vir cheio de tráfego perto de pontos turísticos." },
+  { name:"簡易業務無線 (Kan'i gyōmu)", fmin:154.45, fmax:154.61, def:154.53,
+    demod:"NFM", bw:"12.5 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.56 MSPS", note:"Rádio simplificado de uso comercial (簡易業務無線) — empresas, segurança de eventos/obras (警備無線), serviços gerais." },
+  { name:"簡易無線デジタル (Kan'i digital)", fmin:351.16875, fmax:351.38125, def:351.2,
+    demod:"— (digital DCR)", bw:"6.25 kHz", squelch:"N/A", gain:"Manual",
+    sr:"2.56 MSPS", note:"Versão digital do simples/comercial (デジタル簡易無線) — é DCR, o SDRangel não decodifica o áudio nativamente sem plugin específico. Dá pra ver a atividade no waterfall, mas não ouvir a voz." },
+  { name:"Militar aéreo (225–400)", fmin:225, fmax:400, def:243,
+    demod:"AM", bw:"25 kHz", squelch:"Squelch ativo", gain:"Manual",
+    sr:"2.56 MSPS", note:"Faixa aeronáutica militar (UHF mil air band), padrão internacional usado também em bases no Japão. 243.000 MHz é a frequência de emergência internacional (guarda)." },
   { name:"ADS-B", fmin:1090, fmax:1090, def:1090,
     demod:"ADS-B Demodulator", bw:"2 MHz (modo específico)", squelch:"N/A — modo de pulso", gain:"Manual alto, LNA recomendado",
     sr:"2.56–3.2 MSPS", note:"Telescópica é bem subótima aqui (6.9cm ideal, ganho baixo). Antena colinear dedicada 1090MHz rende muito mais alcance." },
