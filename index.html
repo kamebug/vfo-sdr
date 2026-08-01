@@ -685,6 +685,15 @@
       <p><b>Passo a passo:</b> é o tipo mais trabalhoso dos três — cada elemento de meia-onda precisa ser conectado ao próximo através de uma bobina ou stub que inverte a fase do sinal, senão os elementos cancelam em vez de somar ganho. Pra quem tá começando, vale mais a pena comprar uma colinear comercial pronta (geralmente calibrada de fábrica) do que construir do zero — o ganho real depende muito da precisão da defasagem, e um erro pequeno já derruba o ganho teórico calculado no Laboratório.</p>
     </div>
 
+    <div class="guide-group-title">Medindo a antena de verdade</div>
+    <div class="guide-section" id="g-nanovna">
+      <h3>Sem equipamento (indireto) vs. NanoVNA (de verdade)</h3>
+      <p><b>Sem equipamento:</b> o RTL-SDR só recebe, não transmite, então não dá pra medir SWR de verdade com ele sozinho. O que dá pra fazer: trava numa estação forte conhecida, olha o dB no canal do SDRangel, e ajusta o comprimento da telescópica em pequenos incrementos observando se o sinal sobe ou desce. Funciona como aproximação, mas mistura ganho de antena com propagação do ambiente — não é uma medição limpa.</p>
+      <p><b>Com NanoVNA:</b> é o padrão da comunidade hoje — um analisador de antena portátil (~$50-60) que faz um sweep de frequência e mostra SWR, impedância (R+jX) e ponto de ressonância direto na tela, sem precisar de PC. Conecta na base da antena (ou no fim do coax, mas aí a leitura já inclui a perda do cabo), varre uma faixa ampla ao redor do alvo, e observa onde o SWR realmente baixa — no mundo real isso costuma ficar um pouco deslocado do que a fórmula teórica calcula, porque o ambiente (metal por perto, altura, etc.) desloca a ressonância.</p>
+      <p><b>Dica prática:</b> corte a antena um pouco mais longa do que a calculadora sugere, meça, e vá aparando aos poucos — é bem mais fácil cortar um pouco de cada vez do que errar curto e ter que soldar de volta.</p>
+      <p><b>Conectando com a calculadora do app:</b> o valor de impedância (R) que o NanoVNA mostra é exatamente o que a calculadora de SWR/Casamento de Impedância no Laboratório pede — mede com o NanoVNA, digita o R ali, e confirma se o SWR calculado bate com o que o próprio NanoVNA já mostrou.</p>
+    </div>
+
     <div class="guide-group-title">Posicionamento</div>
     <div class="guide-section" id="g-posicionamento">
       <h3>Polarização, altura e plano de terra — resumo</h3>
