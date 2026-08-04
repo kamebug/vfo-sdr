@@ -694,6 +694,28 @@
       <p><b>Conectando com a calculadora do app:</b> o valor de impedância (R) que o NanoVNA mostra é exatamente o que a calculadora de SWR/Casamento de Impedância no Laboratório pede — mede com o NanoVNA, digita o R ali, e confirma se o SWR calculado bate com o que o próprio NanoVNA já mostrou.</p>
     </div>
 
+    <div class="guide-group-title">Modos de voz digital (rádio amador)</div>
+    <div class="guide-section" id="g-digital-dmr">
+      <span class="tag">DMR</span>
+      <h3>O mais popular globalmente</h3>
+      <p>Protocolo aberto na parte de rádio, mas depende de um codec de voz proprietário (AMBE) licenciado. Suportado por redes de repetidoras interligadas mundialmente (BrandMeister, etc.) — é o que você mais provavelmente vai encontrar numa repetidora digital genérica. Decodificado pelo plugin DSD do SDRangel.</p>
+    </div>
+    <div class="guide-section" id="g-digital-dstar">
+      <span class="tag">D-STAR</span>
+      <h3>O pioneiro</h3>
+      <p>Criado pela Icom, foi o primeiro modo de voz digital popular pro rádio amador. Rede própria de repetidoras (Reflectors). Também usa o codec AMBE proprietário. Menos comum que DMR hoje, mas ainda ativo em muitas regiões.</p>
+    </div>
+    <div class="guide-section" id="g-digital-fusion">
+      <span class="tag">System Fusion / C4FM</span>
+      <h3>O da Yaesu</h3>
+      <p>Tem a vantagem de rodar em modo "Automatic Mode Select" — a mesma repetidora aceita voz analógica FM e digital C4FM automaticamente, facilitando a transição gradual de clubes de rádio amador. Rede própria (Wires-X).</p>
+    </div>
+    <div class="guide-section" id="g-digital-m17">
+      <span class="tag">M17 — o novo, 100% código aberto</span>
+      <h3>Alternativa livre aos três acima</h3>
+      <p>Criado justamente porque DMR, D-STAR e Fusion dependem do codec AMBE, que é proprietário e pago — ninguém fora dos fabricantes pode implementar ou auditar livremente. M17 usa o Codec2 (aberto) no lugar, e o protocolo inteiro é documentado publicamente. Ainda é minoria em uso real, mas cresce bastante na comunidade que valoriza rádio verdadeiramente open-source, incluindo integração nativa com hardware SDR de baixo custo.</p>
+    </div>
+
     <div class="guide-group-title">Posicionamento</div>
     <div class="guide-section" id="g-posicionamento">
       <h3>Polarização, altura e plano de terra — resumo</h3>
