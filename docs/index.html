@@ -337,9 +337,12 @@
     </div>
 
     <div class="card" id="histCard">
-      <h2>Histórico</h2>
-      <div class="hist-list" id="histList"></div>
-      <div class="fav-empty" id="histEmpty">Nenhuma sintonia recente ainda.</div>
+      <h2>
+        Histórico
+        <button class="mini-btn" id="histToggleBtn" style="margin-left:auto">Mostrar</button>
+      </h2>
+      <div class="hist-list" id="histList" style="display:none"></div>
+      <div class="fav-empty hidden" id="histEmpty">Nenhuma sintonia recente ainda.</div>
     </div>
 
     <div class="presets" id="presets"></div>
@@ -1339,11 +1342,12 @@ function relTime(ts){
   if (diffH < 24) return diffH + 'h atrás';
   return Math.round(diffH/24) + 'd atrás';
 }
+let histExpanded = false;
 function renderHistory(){
   const histList = document.getElementById('histList');
   const histEmpty = document.getElementById('histEmpty');
   histList.innerHTML = '';
-  histEmpty.classList.toggle('hidden', tuneHistory.length > 0);
+  histEmpty.classList.toggle('hidden', !histExpanded || tuneHistory.length > 0);
   tuneHistory.forEach(entry => {
     const row = document.createElement('div');
     row.className = 'hist-row';
@@ -1352,6 +1356,16 @@ function renderHistory(){
     histList.appendChild(row);
   });
 }
+
+document.getElementById('histToggleBtn').addEventListener('click', () => {
+  histExpanded = !histExpanded;
+  const histList = document.getElementById('histList');
+  const histEmpty = document.getElementById('histEmpty');
+  const btn = document.getElementById('histToggleBtn');
+  histList.style.display = histExpanded ? 'flex' : 'none';
+  histEmpty.classList.toggle('hidden', !histExpanded || tuneHistory.length > 0);
+  btn.textContent = histExpanded ? 'Ocultar' : 'Mostrar';
+});
 
 /* ---------------- laboratório: conversor de onda ---------------- */
 const labFreqIn = document.getElementById('labFreqIn');
